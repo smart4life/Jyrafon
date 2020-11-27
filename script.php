@@ -135,7 +135,8 @@ if (isset($_FILES['file']) && is_writable(VAR_FILES)
         get_ip_address($cfg),
         $cfg['enable_crypt'],
         $cfg['link_name_length'],
-        $cfg['file_hash']
+        $cfg['file_hash'],
+        $cfg['http_auth_user'] ? $_SERVER['PHP_AUTH_USER'] : ''
     );
 
     if (empty($res) || $res['error']['has_error']) {
@@ -467,7 +468,8 @@ elseif (isset($_GET['init_async'])) {
         isset($_POST['one_time_download']),
         $key,
         $time,
-        get_ip_address($cfg)
+        get_ip_address($cfg),
+        $cfg['http_auth_user'] ? $_SERVER['PHP_AUTH_USER'] : ''
     );
 }
 /* Continue an asynchronous upload. */

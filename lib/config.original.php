@@ -106,6 +106,13 @@ $cfg['admin_password'] = '';
  */
 $cfg['admin_http_auth_user'] = '';
 
+/* If set, let the user be authenticated.
+ * The user provided here is the user authenticated by HTTP authentication.
+ * Note that Jirafeau does not manage the HTTP login part, it just checks
+ * that the provided user is logged in.
+ */
+$cfg['http_auth_user'] = false;
+
 /* Allow user to select different options for file expiration time.
  * Possible values in array:
  * 'minute': file is available for one minute
