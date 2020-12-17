@@ -50,8 +50,7 @@ if (jirafeau_user_session_logged() && isset($_POST['action']) && (strcmp($_POST[
 @error_reporting(0);
 
 if (!$cfg['http_auth_user'] || empty($_SERVER['PHP_AUTH_USER'])) {
-    require(JIRAFEAU_ROOT . 'lib/template/header.php');
-    ?>
+    require(JIRAFEAU_ROOT . 'lib/template/header.php'); ?>
     <div class="info">
     <h2>Not authorized</h2>
     <?php

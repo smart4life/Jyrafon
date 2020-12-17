@@ -287,12 +287,12 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
 
 <?php
 if (!empty($cfg['http_auth_user']) && $_SERVER['PHP_AUTH_USER']) {
-?>
+        ?>
 <div id="history">
     <a id="history_link" href="history.php"><?php echo t('HISTORY') ?></a>
 </div>
 <?php
-}
+    }
 ?>
 
 <script type="text/javascript" lang="Javascript">
