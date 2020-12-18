@@ -167,13 +167,13 @@ if (!(isset($_POST['action']) && strcmp($_POST['action'], 'download') == 0)) {
 /* Check for actions */
 if (isset($_POST['action'])) {
     if (strcmp($_POST['action'], 'clean') == 0) {
-        $total = jirafeau_user_clean();
+        $total = jirafeau_user_clean($_SERVER['PHP_AUTH_USER']);
         echo '<div class="message">' . NL;
         echo '<p>';
         echo t('CLEANED_FILES_CNT') . ' : ' . $total;
         echo '</p></div>';
     } elseif (strcmp($_POST['action'], 'clean_async') == 0) {
-        $total = jirafeau_user_clean_async();
+        $total = jirafeau_user_clean_async($_SERVER['PHP_AUTH_USER']);
         echo '<div class="message">' . NL;
         echo '<p>';
         echo t('CLEANED_FILES_CNT') . ' : ' . $total;
