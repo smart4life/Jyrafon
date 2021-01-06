@@ -1,17 +1,8 @@
-# Jirafeau
+# Jyrafon
 
-![Build Status](https://img.shields.io/gitlab/pipeline/mojo42/Jirafeau/master.svg)
-![Made With](https://img.shields.io/badge/made_with-php-blue.svg)
-![License](https://img.shields.io/badge/license-agpl--3.0-blue.svg)
-![Contribution](https://img.shields.io/badge/contributions_welcome-brightgreen.svg?labelColor=brightgreen)
+Welcome to the official Jyrafon project, an [Open-Source software](https://en.wikipedia.org/wiki/Open-source_software).
 
-Welcome to the official Jirafeau project, an [Open-Source software](https://en.wikipedia.org/wiki/Open-source_software).
-
-Jirafeau is a "one-click-filesharing": Select your file, upload, share a link. That's it.
-
-See [jirafeau.net](https://jirafeau.net/) for a demo.
-
-![Screenshot1](http://i.imgur.com/TPjh48P.png)
+Jyrafon is a "one-click-filesharing": Select your file, upload, share a link. That's it.
 
 ## Main features
 
@@ -35,29 +26,16 @@ See [jirafeau.net](https://jirafeau.net/) for a demo.
 - Bash script to upload files via command line
 - Themes
 
+Jyrafon is a fork of the original project [Jirafeau](https://jirafeau.net/) ([Sources](https://gitlab.com/mojo42/Jirafeau/)) based on the version 4.3.0 (stable version)
 Jirafeau is a fork of the original project [Jyraphe](http://home.gna.org/jyraphe/) based on the 0.5 (stable version) with a **lot** of modifications.
 
-As it's original project, Jirafeau is made in the [KISS](http://en.wikipedia.org/wiki/KISS_principle) way (Keep It Simple, Stupid).
+As it's original project, Jyrafon is made in the [KISS](http://en.wikipedia.org/wiki/KISS_principle) way (Keep It Simple, Stupid).
 
-Jirafeau project won't evolve to a file manager and will focus to keep a very few dependencies.
-
-## Screenshots
-
-- [Installation - Step 1](http://i.imgur.com/hmpT1eN.jpg)
-- [Installation - Step 2](http://i.imgur.com/2e0UGKE.jpg)
-- [Installation - Step 3](http://i.imgur.com/ofAjLXh.jpg)
-- [Installation - Step 4](http://i.imgur.com/WXqnfqJ.jpg)
-- [Upload - Step 1](http://i.imgur.com/SBmSwzJ.jpg)
-- [Upload - Step 2](http://i.imgur.com/wzPkb1Z.jpg)
-- [Upload - Progress](http://i.imgur.com/i6n95kv.jpg)
-- [Upload - Confirmation page](http://i.imgur.com/P2oS1MY.jpg)
-- [Admin Interface](http://i.imgur.com/nTdsVzn.png)
+Jyrafon project won't evolve to a file manager and will focus to keep a very few dependencies.
 
 ## Installation
 
-This shows how to install Jirafeau by your own, it's quite simple but you can
-also use a [docker image](https://hub.docker.com/r/mojo42/jirafeau/) or build
-it yourself. Check [docker folder](docker/README.md) for more informations.
+This shows how to install Jyrafon by your own.
 
 System requirements:
 - PHP >= 5.6
@@ -65,17 +43,17 @@ System requirements:
 - No database required, no mail required
 
 Installation steps:
-- Clone the [repository](https://gitlab.com/mojo42/Jirafeau/) or download the latest [release](https://gitlab.com/mojo42/Jirafeau/tags) from GitLab onto your webserver
+- Clone the [repository](https://github.com/smart4life/Jyrafon/) or download the latest [release](https://github.com/smart4life/Jyrafon/tags) from GitHub onto your webserver
 - Set owner & group according to your webserver
 - A) Setup with the installation wizard (web):
-  - Open your browser and go to your installed location, eg. ```https://example.com/jirafeau/```
+  - Open your browser and go to your installed location, eg. ```https://example.com/jyrafon/```
   - The script will redirect to you to a minimal installation wizard to set up all required options
   - All optional parameters may be set in ```lib/config.local.php```, take a look at ```lib/config.original.php``` to see all default values
 - B) Setup without the installation wizard (cli):
   - Just copy ```lib/config.original.php``` to ```lib/config.local.php``` and customize it
 
 💡 Hint: How to
-[install & configure Jirafeau](https://www.howtoforge.com/how-to-setup-a-file-sharing-website-with-jirafeau-on-debian-10/)
+[install & configure Jyrafon (similar to Jirafeau)](https://www.howtoforge.com/how-to-setup-a-file-sharing-website-with-jirafeau-on-debian-10/)
 on Debian 10 from scratch, with Nginx and PHP-FPM.
 
 ### Troubleshooting
@@ -96,7 +74,7 @@ You have several options:
 
 If you are using Apache, you can add the following line to your configuration to prevent people to access to your ```var``` folder:
 
-```RedirectMatch 301 ^/var-.* http://my.service.jirafeau ```
+```RedirectMatch 301 ^/var-.* http://my.service.jyrafon ```
 
 If you are using nginx, you can add the following to your $vhost.conf:
 
