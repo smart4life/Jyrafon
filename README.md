@@ -130,27 +130,18 @@ PS: If you have fixed errors or added features, then please contribute to the pr
 
 If you want to contribute to project, then take a look at the git repository:
 
-- https://gitlab.com/mojo42/Jirafeau
+- https://github.com/smart4life/Jyrafon
 
-and the Contribution Guidelines
-
-- https://gitlab.com/mojo42/Jirafeau/blob/master/CONTRIBUTING.md
 
 ## FAQ
 
-### Can I add a new language in Jirafeau?
+### Can I add a new language in Jyrafon?
 
 Of course ! Translations are easy to make and no technical knowledge is required.
-
-Simply go to [Jirafeau's Weblate](https://hosted.weblate.org/engage/jirafeau/).
 
 If you want to add a new language in the list, feel free to contact us or leave a comment in ticket #9.
 
 Thanks to all contributors ! :)
-
-### How do I upgrade my Jirafeau?
-
-See change log and upgrade procedure in [CHANGELOG.md](https://gitlab.com/mojo42/Jirafeau/blob/master/CHANGELOG.md).
 
 ### How can I limit upload access?
 
@@ -158,7 +149,7 @@ There are two ways to limit upload access (but not download):
 - you can set one or more passwords in order to access the upload interface, or/and
 - you can configure a list of authorized IP ([CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#CIDR_notation)) which are allowed to access to the upload page
 
-Check documentation of ```upload_password``` and ```upload_ip``` parameters in [lib/config.original.php](https://gitlab.com/mojo42/Jirafeau/blob/master/lib/config.original.php).
+Check documentation of ```upload_password``` and ```upload_ip``` parameters in [lib/config.original.php](https://github.com/smart4life/Jyrafon/blob/master/lib/config.original.php).
 
 ### How can I automatize the cleaning of old (expired) files?
 
@@ -167,8 +158,8 @@ You can call the admin.php script from the command line (CLI) with the ```clean_
 Then the command can be placed in a cron file to automatize the process. For example:
 ```
 # m h dom mon dow user  command
-12 3    * * *   www-data  php /path/to/jirafeau/admin.php clean_expired
-16 3    * * *   www-data  php /path/to/jirafeau/admin.php clean_async
+12 3    * * *   www-data  php /path/to/jyrafon/admin.php clean_expired
+16 3    * * *   www-data  php /path/to/jyrafon/admin.php clean_async
 ```
 
 ### I have some troubles with IE
@@ -187,7 +178,7 @@ Hint: To create a custom theme just copy the »courgette« folder and name your 
 
 ### I found a bug, what should I do?
 
-Feel free to open a bug in the [GitLab's issues](https://gitlab.com/mojo42/Jirafeau/issues).
+Feel free to open a bug in the [GitHub's issues](https://github.com/smart4life/Jyrafon/issues).
 
 ### How to set maximum file size?
 
@@ -196,18 +187,18 @@ If your browser supports HTML5 file API, you can send files as big as you want.
 For browsers who does not support HTML5 file API, the limitation come from PHP configuration.
 You have to set [post_max_size](https://php.net/manual/en/ini.core.php#ini.post-max-size) and [upload_max_filesize](https://php.net/manual/en/ini.core.php#ini.upload-max-filesize) in your php configuration. Note that Nginx setups may requiere to configure `client_max_body_size`.
 
-If you don't want to allow unlimited upload size, you can still setup a maximal file size in Jirafeau's setting (see ```maximal_upload_size``` in your configuration)
+If you don't want to allow unlimited upload size, you can still setup a maximal file size in Jyrafon's setting (see ```maximal_upload_size``` in your configuration)
 
 ### How can I edit an option?
 
-Documentation of all default options are located in [lib/config.original.php](https://gitlab.com/mojo42/Jirafeau/blob/master/lib/config.original.php).
+Documentation of all default options are located in [lib/config.original.php](https://github.com/smart4life/Jyrafon/blob/master/lib/config.original.php).
 If you want to change an option, just edit your ```lib/config.local.php```.
 
 ### How can I change the Terms of Service?
 
 The license text on the "Terms of Service" page, which is shipped with the default installation, is based on the »[Open Source Initiative Terms of Service](https://opensource.org/ToS)«.
 
-To change this text simply copy the file [/lib/tos.original.txt](https://gitlab.com/mojo42/Jirafeau/blob/master/lib/tos.original.txt), rename it to ```/lib/tos.local.txt``` and adapt it to your own needs.
+To change this text simply copy the file [/lib/tos.original.txt](https://github.com/smart4life/Jyrafon/blob/master/lib/tos.original.txt), rename it to ```/lib/tos.local.txt``` and adapt it to your own needs.
 
 If you update the installation, then only the ```tos.original.txt``` file may change eventually, not your ```tos.local.txt``` file.
 
@@ -235,21 +226,17 @@ http {
 }
 ```
 
-### How can I monitor the use of my Jirafeau instance?
+### How can I monitor the use of my Jyrafon instance?
 
-You may use Munin and simple scripts to collect the number of files in the Jirafeau instance as well as the disk space occupied by all the files. You can consult this [web page](https://blog.bandinelli.net/index.php?post/2016/05/15/Scripts-Munin-pour-Jirafeau).
-
-### Why forking?
-
-The original project seems not to be continued anymore and I prefer to add more features and increase security from a stable version.
+You may use Munin and simple scripts to collect the number of files in the Jyrafon instance as well as the disk space occupied by all the files. You can consult this [web page](https://blog.bandinelli.net/index.php?post/2016/05/15/Scripts-Munin-pour-Jirafeau).
 
 ### What can we expect in the future?
 
-Check [issues](https://gitlab.com/mojo42/Jirafeau/issues) to check open bugs and incoming new stuff. :)
+Check [issues](https://github.com/smart4life/Jyrafon/issues) to check open bugs and incoming new stuff. :)
 
 ### What about this file deduplication thing?
 
-Jirafeau uses a very simple file level deduplication for storage optimization.
+Jyrafon uses a very simple file level deduplication for storage optimization.
 
 This mean that if some people upload several times the same file, this will only store one time the file and increment a counter.
 
@@ -257,7 +244,7 @@ If someone use his/her delete link or an admin cleans expired links, this will d
 
 When the counter falls to zero, the file is destroyed.
 
-In order to know if a newly uploaded file already exist, Jirafeau will hash the file using md5 by default but other methods are available (see `file_hash` documentation in `lib/config.original.php`).
+In order to know if a newly uploaded file already exist, Jyrafon will hash the file using md5 by default but other methods are available (see `file_hash` documentation in `lib/config.original.php`).
 
 ### What is the difference between "delete link" and "delete file and links" in admin interface?
 
@@ -265,11 +252,3 @@ As explained in the previous question, files with the same hash are not duplicat
 So:
 - The button "delete link" will delete the reference to the file but might not destroy the file.
 - The button "delete file and links" will delete all references pointing to the file and will destroy the file.
-
-### How to contact someone from Jirafeau?
-
-Feel free to create an issue if you found a bug.
-
-### Can I buy you a coffee?
-
-You can [drop few bucks](https://www.paypal.com/paypalme/jeromejutteau) to help the [demo web site](https://jirafeau.net) to stay alive.
