@@ -408,11 +408,14 @@ function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $crypt, $l
     /* Crypt file if option is enabled. */
     $crypted = false;
     $crypt_key = '';
-    if ($crypt == true && !(extension_loaded('mcrypt') == true)) {
-        error_log("PHP extension mcrypt not loaded, won't encrypt in Jirafeau");
+    // if ($crypt == true && !(extension_loaded('mcrypt') == true)) {
+    //     error_log("PHP extension mcrypt not loaded, won't encrypt in Jirafeau");
+    // }
+    if ($crypt == true && !(extension_loaded('openssl') == true)) {
+        error_log("PHP extension openssl not loaded, won't encrypt in Jirafeau");
     }
     if ($crypt == true && extension_loaded('mcrypt') == true) {
-        $crypt_key = jirafeau_encrypt_file($file['tmp_name'], $file['tmp_name']);
+        $crypt_key = jirafeau_encrypt_file_openssl($file['tmp_name'], $file['tmp_name']);
         if (strlen($crypt_key) > 0) {
             $crypted = true;
         }
@@ -1037,7 +1040,53 @@ function jirafeau_crypt_create_iv($base, $size)
     $iv = substr($iv, 0, $size);
     return $iv;
 }
+/**
+ * Crypt file with openssl_encrypt
+ * For 'AES-128-CBC' each block consist of 16 bytes.
+ * @param string $fp_src Path to file that should be encrypted
+ * @param string $key    The key used for the encryption
+ * @param string $fp_dst   File name where the encryped file should be written to.
+ */
 
+function jirafeau_encrypt_file_openssl($fp_src, $fp_dst)
+{
+    // File content verification
+    $fs = filesize($fp_src);
+    if ($fs === false || $fs == 0 || !(extension_loaded('openssl') == true)) {
+        return '';
+    }
+    echo('test');
+    //Génère une combinaison aléatoire
+    $key = jirafeau_gen_random(10);
+    $hash_key = md5($key);
+    //initialisation du vecteur
+    $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
+    // Error handling
+    if ($fpOut = fopen($fp_dst, 'r')) {
+        echo('ouvertDST');
+        // Put the initialzation vector to the beginning of the file
+        fwrite($fpOut, $iv);
+            /* Crypt file. */
+        if ($fpIn = fopen($fp_src, 'r')) {
+            echo('ouvertSRC');
+            //tant que la fin du fichier n'est pas atteint 
+            while (!feof($fpIn)) {
+                //?
+                //Crypt file with openssl
+                $result = openssl_encrypt($fpIn, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv);
+                //Écriture dans le nouveau fichier de l'encryption
+                fwrite($fpOut, $result);
+            }
+            fclose($fpIn);            
+        } else {
+            echo('fail ouverture2');
+        }
+        fclose($fpOut);
+    } else {
+        echo('fail ouverture2');
+    }
+    return $key;
+}
 /**
  * Crypt file and returns decrypt key.
  * @param $fp_src file path to the file to crypt.
