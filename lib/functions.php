@@ -408,9 +408,7 @@ function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $crypt, $l
     /* Crypt file if option is enabled. */
     $crypted = false;
     $crypt_key = '';
-    // if ($crypt == true && !(extension_loaded('mcrypt') == true)) {
-    //     error_log("PHP extension mcrypt not loaded, won't encrypt in Jirafeau");
-    // }
+   
     if ($crypt == true && !(extension_loaded('openssl') == true)) {
         error_log("PHP extension openssl not loaded, won't encrypt in Jirafeau");
     } elseif($crypt == true && !(extension_loaded('openssl') == true)){
@@ -1109,72 +1107,77 @@ function jirafeau_crypt_create_iv($base, $size)
  * So if we read 10,000 blocks we load 160kb into memory. You may adjust this value
  * to read/write shorter or longer chunks.
  */
-define('FILE_ENCRYPTION_BLOCKS', 10000);
+define('FILE_ENCRYPTION_BLOCKS', 100000);
 /**
  * Crypt file with openssl_encrypt
  * For 'AES-128-CBC' each block consist of 16 bytes.
- * @param string $file_path Path to file that should be encrypted
+ * @param string $fp_src Path to file that should be encrypted
  * @param string $key    The key used for the encryption
- * @param string $file   File name where the encryped file should be written to.
+ * @param string $fp_dst   File name where the encryped file should be written to.
  */
 
-function jirafeau_encrypt_file_openssl($file_path, $key, $file)
+function jirafeau_encrypt_file_openssl($fp_src, $key, $fp_dst)
 {
-   // File content verification
-   $file_size = filesize($file_path);
+     // File content verification
+   $file_size = filesize($fp_src);
    if ($file_size === false || $file_size == 0 || !(extension_loaded('openssl') == true)) {
        return '';
    }
-   //Hash key
-   $hash_key = md5($key);
-   //vector initialization
-   $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
-   $fpOut = fopen($file, 'w');
-       // Put the initialzation vector to the beginning of the file
-   fwrite($fpOut, $iv);
-   $fpIn = fopen($file_path, 'rb'); //open non-text files better
-    /* Crypt file */ 
-       // feof: as long as the end of the file is not reached
-       while (!feof($fpIn)) {
-           $plaintext = fread($fpIn, 16 * FILE_ENCRYPTION_BLOCKS);
-           $enc = openssl_encrypt($plaintext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv); //OPENSSL_RAW_DATA: it will be understood as row data
-           // Use the first 16 bytes of the ciphertext as the next initialization vector
-           $iv = substr($enc, 0, 16);
-           //Writing in the new encryption file
-           fwrite($fpOut, $enc);
-       }
-       fclose($fpIn); 
-       fclose($fpOut);    
-   return $key;
+    //Hash key
+    $hash_key = md5($key);
+    //vector initialization
+    $iv = jirafeau_crypt_create_iv($hash_key, openssl_cipher_iv_length('aes-128-cbc'));
+    $fpOut = fopen($fp_dst, 'c'); // 'c' Open the file for writing only. If the file does not exist, it will be created, if it exists, it is not truncated (unlike 'w')
+    // Put the initialzation vector to the beginning of the file
+        $fpIn = fopen($fp_src, 'rb');
+        /* Crypt file */ 
+        // feof: as long as the end of the file is not reached
+            while (!feof($fpIn)) {
+                $plaintext = fread($fpIn, 16 * FILE_ENCRYPTION_BLOCKS);
+                $ciphertext = openssl_encrypt($plaintext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv);//OPENSSL_RAW_DATA: it will be understood as row data
+                // Use the first 16 bytes of the ciphertext as the next initialization vector
+                //Writing in the new encryption file
+                fwrite($fpOut, $ciphertext);
+            }
+            //Close files
+        fclose($fpIn);
+        fclose($fpOut);
+
+        return $key;
 }
 /**
  * Dencrypt the passed file and saves the result in a new file, removing the
  * last 4 characters from file name.
  * 
- * @param string $file_path Path to file that should be decrypted
+ * @param string $fp_src Path to file that should be decrypted
  * @param string $key    The key used for the decryption (must be the same as for encryption)
- * @param string $file   File name where the decryped file should be written to.
+ * @param string $fp_dst   File name where the decryped file should be written to.
  * @return string|false  Returns the file name that has been created or FALSE if an error occured
  */
-function jirafeau_decrypt_file_openssl($file_path, $key, $iv, $file)
+function jirafeau_decrypt_file_openssl($fp_src, $key, $fp_dst)
 {
-    //Hash key
-    $hash_key = md5($key);
-    $fpOut = fopen($file, 'w');
+       //File content verification
+       $file_size = filesize($fp_src);
+       if ($file_size === false || $file_size == 0 || !(extension_loaded('openssl') == true)) {
+           return '';
+       }
+        $hash_key = md5($key);
+        $iv = jirafeau_crypt_create_iv($hash_key, openssl_cipher_iv_length('aes-128-cbc'));
+    
+        $fpOut = fopen($fp_dst, 'c');
+        $fpIn = fopen($fp_src, 'rb'); 
+                //Get the initialzation vector from the beginning of the file
+                while (!feof($fpIn)) {
+                    $ciphertext = fread($fpIn, 16 * (FILE_ENCRYPTION_BLOCKS + 1 )); // we have to read one block more for decrypting than for encrypting
+                    $plaintext = openssl_decrypt($ciphertext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv);
+                    print $plaintext;
+                    // Use the first 16 bytes of the ciphertext as the next initialization vector
+                    fwrite($fpOut, $plaintext);
+                }
+                fclose($fpIn);
+            fclose($fpOut);
+        return $fp_dst;
 
-        $fpIn = fopen($file_path, 'rb');
-            // Get the initialzation vector from the beginning of the file
-            $iv = fread($fpIn, 16);
-            /* Decrypt file */ 
-            while (!feof($fpIn)) {
-                $ciphertext = fread($fpIn, (FILE_ENCRYPTION_BLOCKS + 1)); // we have to read one block more for decrypting than for encrypting
-                $plaintext = openssl_decrypt($ciphertext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv); //OPENSSL_RAW_DATA: it will be understood as row data
-                // Use the first 16 bytes of the ciphertext as the next initialization vector
-                $iv = substr($ciphertext, 0, 16);
-                fwrite($fpOut, $plaintext);
-            }
-        fclose($fpIn);
-        fclose($fpOut);
 }
 /**
  * Crypt file and returns decrypt key.

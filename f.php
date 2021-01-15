@@ -251,7 +251,31 @@ if ($cfg['litespeed_workaround']) {
     }
 }
 /* Read encrypted file. */
-elseif ($link['crypted']) {
+elseif ($link['crypted'] == 'T') {
+    
+    $file = VAR_FILES . $p . $link['hash'];
+    /* File content verification */
+   $file_size = filesize($file);
+   if ($file_size === false || $file_size == 0 || !(extension_loaded('openssl') == true)) {
+       return '';
+   }
+   /* Hash key */
+    $hash_key = md5($crypt_key);
+    $fpIn = fopen($file, 'rb');
+    /* Vector initialization */
+    $iv = jirafeau_crypt_create_iv($hash_key, openssl_cipher_iv_length('aes-128-cbc'));
+
+            // Get the initialzation vector from the beginning of the file
+            while (!feof($fpIn)) {
+                $ciphertext = fread($fpIn, 16 * (FILE_ENCRYPTION_BLOCKS + 1)); // we have to read one block more for decrypting than for encrypting
+                $plaintext = openssl_decrypt($ciphertext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv);
+                print $plaintext;
+                // Use the first 16 bytes of the ciphertext as the next initialization vector
+            }
+            fclose($fpIn);
+
+} else if($link['crypted'] == 'C') {
+    /*Mcrypt*/
     /* Init module */
     $m = mcrypt_module_open('rijndael-256', '', 'ofb', '');
     /* Extract key and iv. */
@@ -271,7 +295,7 @@ elseif ($link['crypted']) {
     mcrypt_module_close($m);
 }
 /* Read file. */
-else {
+     else {
     $r = fopen(VAR_FILES . $p . $link['hash'], 'r');
     while (!feof($r)) {
         print fread($r, 1024);
