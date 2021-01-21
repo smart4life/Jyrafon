@@ -140,6 +140,9 @@ if (isset($_FILES['file']) && is_writable(VAR_FILES)
         $time,
         $ip,
         $cfg['enable_crypt'],
+        $cfg['enable_openssl'],
+        $cfg['enable_mcrypt'],
+        $cfg['enable_autocrypt'],
         $cfg['link_name_length'],
         $cfg['file_hash']
     ); 
@@ -497,17 +500,14 @@ elseif (isset($_GET['push_async'])) {
             $cfg['maximal_upload_size']
         );
     }
-}
-/* Finalize an asynchronous upload. */
-elseif (isset($_GET['end_async'])) {
+} else if (isset($_GET['end_async'])) { /* Finalize an asynchronous upload. */
     if (!isset($_POST['ref'])
         || !isset($_POST['code'])) {
         echo 'Error 24';
     } else {
-        // Temporary version
-        $openssl = true; //Enable encryption with openssl
-        $mcrypt = false; //Enable encryption with mcrypt 
-        echo jirafeau_async_end($_POST['ref'], $_POST['code'], $cfg['enable_crypt'], $cfg['link_name_length'], $cfg['file_hash'], $openssl, $mcrypt);
+        $openssl = $cfg['enable_openssl'];
+        $mcrypt = $cfg['enable_mcrypt'];
+        echo jirafeau_async_end($_POST['ref'], $_POST['code'], $cfg['enable_crypt'], $cfg['link_name_length'], $cfg['file_hash'],$openssl, $mcrypt);
     }
 } else {
     echo 'Error 25';

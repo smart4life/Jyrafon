@@ -6,8 +6,7 @@ var-*
 composer.phar
 /vendor
 .idea/
-media/theme-jirafeau
-CryptFiles
+
 # Ignore file starting with dot, but keep others
 .*
 !.gitlab-ci.yml

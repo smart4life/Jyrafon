@@ -225,7 +225,8 @@ if (!$password_challenged && !$do_download && !$do_preview) {
     require(JIRAFEAU_ROOT.'lib/template/footer.php');
     exit;
 }
-
+//Determinate type of encryption
+$option = determinateOptionEncrypt($cfg['enable_openssl'],$cfg['enable_mcrypt']);
 header('HTTP/1.0 200 OK');
 header('Content-Length: ' . $link['file_size']);
 if (!jirafeau_is_viewable($link['mime_type']) || !$cfg['preview'] || $do_download) {
@@ -249,33 +250,30 @@ if ($cfg['litespeed_workaround']) {
         header('Location: ' . $_SERVER['PHP_SELF'] . '/' . $link['file_name'] . '?' .
                $_SERVER['QUERY_STRING'] . '&litespeed_workaround=phase2');
     }
-}
-/* Read encrypted file. */
-elseif ($link['crypted'] == 'T') {
-    
+} elseif ($option == OptionCrypt::openssl) { /* Read encrypted file. */    
     $file = VAR_FILES . $p . $link['hash'];
     /* File content verification */
-   $file_size = filesize($file);
-   if ($file_size === false || $file_size == 0 || !(extension_loaded('openssl') == true)) {
-       return '';
-   }
-   /* Hash key */
+    verification_check($file);
+    /* Hash key */
     $hash_key = md5($crypt_key);
     $fpIn = fopen($file, 'rb');
     /* Vector initialization */
     $iv = jirafeau_crypt_create_iv($hash_key, openssl_cipher_iv_length('aes-128-cbc'));
 
-            // Get the initialzation vector from the beginning of the file
-            while (!feof($fpIn)) {
-                $ciphertext = fread($fpIn, 16 * (FILE_ENCRYPTION_BLOCKS + 1)); // we have to read one block more for decrypting than for encrypting
-                $plaintext = openssl_decrypt($ciphertext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv);
-                print $plaintext;
-                // Use the first 16 bytes of the ciphertext as the next initialization vector
-            }
-            fclose($fpIn);
+        // Get the initialzation vector from the beginning of the file
+        while (!feof($fpIn)) {
+            $ciphertext = fread($fpIn, FILE_ENCRYPTION_BLOCKS); // we have to read one block more for decrypting than for encrypting
+            $plaintext = openssl_decrypt($ciphertext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv);
+            print $plaintext;
+            // Use the first 16 bytes of the ciphertext as the next initialization vector
+        }
+        fclose($fpIn);
 
-} else if($link['crypted'] == 'C') {
+} elseif($option == OptionCrypt::mcrypt) {
     /*Mcrypt*/
+    $file = VAR_FILES . $p . $link['hash'];
+    /* File content verification */
+    verification_check($file);
     /* Init module */
     $m = mcrypt_module_open('rijndael-256', '', 'ofb', '');
     /* Extract key and iv. */
@@ -284,7 +282,7 @@ elseif ($link['crypted'] == 'T') {
     /* Init module. */
     mcrypt_generic_init($m, $hash_key, $iv);
     /* Decrypt file. */
-    $r = fopen(VAR_FILES . $p . $link['hash'], 'r');
+    $r = fopen($file, 'r');
     while (!feof($r)) {
         $dec = mdecrypt_generic($m, fread($r, 1024));
         print $dec;
@@ -295,7 +293,7 @@ elseif ($link['crypted'] == 'T') {
     mcrypt_module_close($m);
 }
 /* Read file. */
-     else {
+    else {
     $r = fopen(VAR_FILES . $p . $link['hash'], 'r');
     while (!feof($r)) {
         print fread($r, 1024);
