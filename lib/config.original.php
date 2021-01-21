@@ -65,6 +65,18 @@ $cfg['preview'] = true;
  */
 $cfg['enable_crypt'] = false;
 
+/*Enable openssl encryption
+*/
+$cfg['enable_openssl'] = true;
+
+/*Enable mcrypt encryption
+*/
+$cfg['enable_mcrypt'] = false;
+
+/*Enable autoselect encryption
+*/
+$cfg['enable_autocrypt'] = false;
+
 /* Length of link reference
  */
 $cfg['link_name_length'] = 8;
