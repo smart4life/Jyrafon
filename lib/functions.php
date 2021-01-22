@@ -1173,7 +1173,6 @@ function jirafeau_encrypt_file_openssl($fp_src, $key, $fp_dst)
         //Close files
         fclose($fpIn);
         fclose($fpOut);
-        
         return $key;
     } else {
        error_log("PHP extension: the file is empty  ");
