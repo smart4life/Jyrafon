@@ -226,7 +226,6 @@ if (!$password_challenged && !$do_download && !$do_preview) {
     exit;
 }
 //Determinate type of encryption
-$option = determinateOptionEncrypt($cfg['enable_openssl'],$cfg['enable_mcrypt']);
 header('HTTP/1.0 200 OK');
 header('Content-Length: ' . $link['file_size']);
 if (!jirafeau_is_viewable($link['mime_type']) || !$cfg['preview'] || $do_download) {
@@ -250,16 +249,19 @@ if ($cfg['litespeed_workaround']) {
         header('Location: ' . $_SERVER['PHP_SELF'] . '/' . $link['file_name'] . '?' .
                $_SERVER['QUERY_STRING'] . '&litespeed_workaround=phase2');
     }
-} elseif ($option == OptionCrypt::openssl) { /* Read encrypted file. */    
-    $file = VAR_FILES . $p . $link['hash'];
-    /* File content verification */
-    verification_check($file);
-    /* Hash key */
-    $hash_key = md5($crypt_key);
-    $fpIn = fopen($file, 'rb');
-    /* Vector initialization */
-    $iv = jirafeau_crypt_create_iv($hash_key, openssl_cipher_iv_length('aes-128-cbc'));
+/* Read encrypted file. */    
+} elseif ($cfg['crypt'] == 'openssl' || $cfg['crypt'] == 'autocrypt' && extension_loaded('mcrypt') == false) { 
 
+    /* File content verification */
+    $file = VAR_FILES . $p . $link['hash'];
+    if(verification_check($file) == true) {
+
+        /* Hash key */
+        $hash_key = md5($crypt_key);
+        $fpIn = fopen($file, 'rb');
+        /* Vector initialization */
+        $iv = jirafeau_crypt_create_iv($hash_key, openssl_cipher_iv_length('aes-128-cbc'));
+        
         // Get the initialzation vector from the beginning of the file
         while (!feof($fpIn)) {
             $ciphertext = fread($fpIn, FILE_ENCRYPTION_BLOCKS); // we have to read one block more for decrypting than for encrypting
@@ -268,29 +270,36 @@ if ($cfg['litespeed_workaround']) {
             // Use the first 16 bytes of the ciphertext as the next initialization vector
         }
         fclose($fpIn);
+    } else {
+        error_log("PHP extension: the file is empty  ");
+    }
+} elseif ($cfg['crypt'] == 'openssl' || $cfg['crypt'] == 'autocrypt' && extension_loaded('openssl') == false) {
 
-} elseif($option == OptionCrypt::mcrypt) {
     /*Mcrypt*/
     $file = VAR_FILES . $p . $link['hash'];
     /* File content verification */
-    verification_check($file);
-    /* Init module */
-    $m = mcrypt_module_open('rijndael-256', '', 'ofb', '');
-    /* Extract key and iv. */
-    $hash_key = md5($crypt_key);
-    $iv = jirafeau_crypt_create_iv($hash_key, mcrypt_enc_get_iv_size($m));
-    /* Init module. */
-    mcrypt_generic_init($m, $hash_key, $iv);
-    /* Decrypt file. */
-    $r = fopen($file, 'r');
-    while (!feof($r)) {
-        $dec = mdecrypt_generic($m, fread($r, 1024));
-        print $dec;
+    if(verification_check($file) == true) {
+
+        /* Extract key and iv. */
+        $hash_key = md5($crypt_key);
+        /* Init module */
+        $m = mcrypt_module_open('rijndael-256', '', 'ofb', '');
+        $iv = jirafeau_crypt_create_iv($hash_key, mcrypt_enc_get_iv_size($m));
+        /* Init module. */
+        mcrypt_generic_init($m, $hash_key, $iv);
+        /* Decrypt file. */
+        $r = fopen($file, 'r');
+        while (!feof($r)) {
+            $dec = mdecrypt_generic($m, fread($r, 1024));
+            print $dec;
+        }
+        fclose($r);
+        /* Cleanup. */
+        mcrypt_generic_deinit($m);
+        mcrypt_module_close($m);
+    } else {
+        error_log("PHP extension: the file is empty  ");
     }
-    fclose($r);
-    /* Cleanup. */
-    mcrypt_generic_deinit($m);
-    mcrypt_module_close($m);
 }
 /* Read file. */
     else {

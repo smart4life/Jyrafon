@@ -139,10 +139,7 @@ if (isset($_FILES['file']) && is_writable(VAR_FILES)
         $key,
         $time,
         $ip,
-        $cfg['enable_crypt'],
-        $cfg['enable_openssl'],
-        $cfg['enable_mcrypt'],
-        $cfg['enable_autocrypt'],
+        $cfg,
         $cfg['link_name_length'],
         $cfg['file_hash']
     ); 
@@ -505,9 +502,7 @@ elseif (isset($_GET['push_async'])) {
         || !isset($_POST['code'])) {
         echo 'Error 24';
     } else {
-        $openssl = $cfg['enable_openssl'];
-        $mcrypt = $cfg['enable_mcrypt'];
-        echo jirafeau_async_end($_POST['ref'], $_POST['code'], $cfg['enable_crypt'], $cfg['link_name_length'], $cfg['file_hash'],$openssl, $mcrypt);
+        echo jirafeau_async_end($_POST['ref'], $_POST['code'], $cfg, $cfg['link_name_length'], $cfg['file_hash']);
     }
 } else {
     echo 'Error 25';

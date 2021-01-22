@@ -17,16 +17,6 @@
  *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- * Define the number of blocks that should be read from the file_path file for each chunk.
- * For 'AES-128-CBC' each block consist of 16 bytes.
- * So if we read 10,000 blocks we load 160kb into memory. You may adjust this value
- * to read/write shorter or longer chunks.
- * see more : https://www.php.net/manual/fr/function.openssl-encrypt.php
- *            https://riptutorial.com/php/example/25499/symmetric-encryption-and-decryption-of-large-files-with-openssl  
- */
-define('FILE_ENCRYPTION_BLOCKS', 100000);
 
 /**
  * Transform a string in a path by seperating each letters by a '/'.
@@ -385,21 +375,45 @@ function jirafeau_md5_outside($file_path)
     fclose($handle);
     return $out;
 }
+
 /*Determinate type of encryption*/
-function determinateOptionEncrypt($crypt_openssl, $crypt_mcrypt){
-    abstract class OptionCrypt
-    {
-        const openssl = 'S';
-        const mcrypt = 'C';
-    }
-    if($crypt_openssl == true && $crypt_mcrypt == false){
-        $option = OptionCrypt::openssl;
-    return $option;
-    } else if($crypt_mcrypt == true && $crypt_openssl == false){
-        $option = OptionCrypt::mcrypt;
-    return $option;
+function determinateOptionEncrypt($cfg)
+{
+    /*Determinate type of encryption*/
+    switch ($cfg['crypt']) {
+        case mcrypt:
+            $option = 'C';
+            return $option;
+            break;
+        case openssl:
+            $option = 'S';
+            return $option;
+            break;
+        case autocrypt:
+            $option = 'A';
+            return $option;
+            break;
+        default:
+            error_log("PHP extension openssl or mcrypt not loaded, won't encrypt in Jirafeau");
+            break;
     }
 }
+
+function determinateCrypt($cfg)
+{
+    switch ($cfg['enable_crypt']) {
+        case true:
+            $optionCrypt = determinateOptionEncrypt($cfg);
+            return $optionCrypt;
+            break;
+        case false:
+            $option = 'O';
+            return $option;
+            error_log("PHP extension, Encryption is not enable, won't encrypt in Jirafeau");
+            break;
+    }
+}
+
 /**
  * handles an uploaded file
  * @param $file the file struct given by $_FILE[]
@@ -414,7 +428,7 @@ function determinateOptionEncrypt($crypt_openssl, $crypt_mcrypt){
  *   'link' => the link name of the uploaded file
  *   'delete_link' => the link code to delete file
  */
-function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $crypt, $crypt_openssl, $crypt_mcrypt, $auto_encrypt, $link_name_length, $file_hash_method)
+function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $cfg, $link_name_length, $file_hash_method)
 {
     if (empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
         return (array(
@@ -431,47 +445,50 @@ function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $crypt, $c
     /* Crypt file if option is enabled. */
     $crypted = false;
     $crypt_key = '';
-    $key = jirafeau_gen_random(10);
-    if($crypt == true && $auto_encrypt == false){
-        if (extension_loaded('openssl') == true && $crypt_openssl == true && $crypt_mcrypt == false) {
-            $crypt_key = jirafeau_encrypt_file_openssl($file['tmp_name'], $key, $file['tmp_name']);
-            if (strlen($crypt_key) > 0) {
-                $crypted = true;
-            }
-        } else {
-            error_log("PHP extension openssl not loaded, won't encrypt in Jirafeau");
-        }
-        if (extension_loaded('mcrypt') == true && $crypt_mcrypt == true && $crypt_openssl == false) {
-            $crypt_key = jirafeau_encrypt_file($file['tmp_name'], $file['tmp_name']);
-            if (strlen($crypt_key) > 0) {
-                $crypted = true;
-            }
-        } else {
-            error_log("PHP extension mcrypt not loaded, won't encrypt in Jirafeau");
-        }
-    } else {
-        error_log("PHP extension mcrypt, openssl not loaded or option encrypt is not enable, won't encrypt in Jirafeau");
-    }
-    if ($auto_encrypt == true && $crypt == true){
-        //Use Mcrypt
-        if(extension_loaded('mcrypt') == true) {
-            $crypt_key = jirafeau_encrypt_file($file['tmp_name'],$file['tmp_name']);
-            if (strlen($crypt_key) > 0) {
-                $crypted = true;
-            } else if(!(extension_loaded('mcrypt') == true)) {
+
+    /*Determinate type of encryption*/
+    switch ($cfg['crypt']) {
+        case mcrypt:
+            if (extension_loaded('mcrypt') == true) {
+                $crypt_key = jirafeau_encrypt_file($file['tmp_name'], $file['tmp_name']);
+                if (strlen($crypt_key) > 0) {
+                    $crypted = true;
+                }
+            } else {
                 error_log("PHP extension mcrypt not loaded, won't encrypt in Jirafeau");
             }
-        } 
-        // Use opensll
-        if(extension_loaded('openssl') == true && !(extension_loaded('mcrypt') == true) ){
-            $crypt_key = jirafeau_encrypt_file_openssl($file['tmp_name'], $key, $file['tmp_name']);                
-            if (strlen($crypt_key) > 0) {
-                $crypted = true;
-            }        
-        } elseif (!(extension_loaded('opensll') == true)){
-            error_log("PHP extension openssl not loaded, won't encrypt in Jirafeau");
-        }
-    }  
+            break;
+        case openssl:
+            if (extension_loaded('openssl') == true) {
+                $key = jirafeau_gen_random(10);
+                $crypt_key = jirafeau_encrypt_file_openssl($file['tmp_name'], $key, $file['tmp_name']);
+                if (strlen($crypt_key) > 0) {
+                    $crypted = true;
+                }
+            } else {
+                error_log("PHP extension openssl not loaded, won't encrypt in Jirafeau");
+            }
+            break;
+        case autocrypt:
+            if (extension_loaded('mcrypt') == true && extension_loaded('openssl') == false) {
+                $crypt_key = jirafeau_encrypt_file($file['tmp_name'], $file['tmp_name']);
+                if (strlen($crypt_key) > 0) {
+                    $crypted = true;
+                }
+            } else if (extension_loaded('openssl') == true && extension_loaded('mcrypt') == false) {
+                $key = jirafeau_gen_random(10);
+                $crypt_key = jirafeau_encrypt_file_openssl($file['tmp_name'], $key, $file['tmp_name']);
+                if (strlen($crypt_key) > 0) {
+                    $crypted = true;
+                }
+            } else {
+                error_log("PHP extension openssl and mcrypt are loaded, won't encrypt in Jirafeau, please choose one ");
+            }
+            break;
+        default:
+            error_log("PHP extension openssl or mcrypt not loaded, won't encrypt in Jirafeau");
+            break;
+    }
     /* file informations */
     $hash = jirafeau_hash_file($file_hash_method, $file['tmp_name']);
     $name = str_replace(NL, '', trim($file['name']));
@@ -519,16 +536,16 @@ function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $crypt, $c
     /* create link file */
     $link_tmp_name =  VAR_LINKS . $hash . rand(0, 10000) . '.tmp';
     $handle = fopen($link_tmp_name, 'w');
+    $option = determinateCrypt($cfg);
 
-    $option = determinateOptionEncrypt($crypt_openssl, $crypt_mcrypt);
     /*File encrypt with openssl ? */
-        fwrite(
-            $handle,
-            $name . NL. $mime_type . NL. $size . NL. $password . NL. $time .
-            NL . $hash. NL . ($one_time_download ? 'O' : 'R') . NL . time() .
-            NL . $ip . NL. $delete_link_code . NL . ($crypted ? $option : 'O')
-        );
-        fclose($handle);
+    fwrite(
+        $handle,
+        $name . NL. $mime_type . NL. $size . NL. $password . NL. $time .
+        NL . $hash. NL . ($one_time_download ? 'O' : 'R') . NL . time() .
+        NL . $ip . NL. $delete_link_code . NL . ($crypted ? $option : 'O')
+    );
+    fclose($handle);
     $hash_link = substr(base_16_to_64(md5_file($link_tmp_name)), 0, $link_name_length);
     $l = s2p("$hash_link");
     if (!@mkdir(VAR_LINKS . $l, 0755, true) ||
@@ -936,9 +953,9 @@ function jirafeau_async_init($filename, $type, $one_time, $key, $time, $ip)
     fwrite(
         $handle,
         str_replace(NL, '', trim($filename)) . NL .
-            str_replace(NL, '', trim($type)) . NL . $password . NL .
-            $time . NL . ($one_time ? 'O' : 'R') . NL . $ip . NL .
-            time() . NL . $code . NL
+        str_replace(NL, '', trim($type)) . NL . $password . NL .
+        $time . NL . ($one_time ? 'O' : 'R') . NL . $ip . NL .
+        time() . NL . $code . NL
     );
     fclose($handle);
 
@@ -1017,7 +1034,7 @@ function jirafeau_async_push($ref, $data, $code, $max_file_size)
   * @param $mcrypt boolean, encryption with mcrypt
   * @return a string containing the download reference followed by a delete code or the string 'Error'
   */
-function jirafeau_async_end($ref, $code, $crypt, $link_name_length, $file_hash_method, $openssl, $mcrypt)
+function jirafeau_async_end($ref, $code, $cfg, $link_name_length, $file_hash_method)
 {
     /* Get async infos. */
     $a = jirafeau_get_async_ref($ref);
@@ -1034,23 +1051,24 @@ function jirafeau_async_end($ref, $code, $crypt, $link_name_length, $file_hash_m
 
     $crypted = false;
     $crypt_key = '';
-    $key = jirafeau_gen_random(10);
-    if ($openssl == true){
-        if ($crypt == true && extension_loaded('openssl') == true) {
+    if ($cfg['crypt'] == openssl || $cfg['crypt'] == autocrypt) {
+        if (extension_loaded('openssl') == true && extension_loaded('mcrypt') == false) {
+            $key = jirafeau_gen_random(10);
             $crypt_key = jirafeau_encrypt_file_openssl($p, $key, $p);
             if (strlen($crypt_key) > 0) {
                 $crypted = true;
             }
         }
-    }else if($mcrypt == true){
-        if ($crypt == true && extension_loaded('mcrypt') == true) {
+    } elseif($cfg['crypt'] == mcrypt || $cfg['crypt'] == autocrypt) {
+        if (extension_loaded('mcrypt') == true && extension_loaded('openssl') == false) {
+            $key = jirafeau_gen_random(10);
             $crypt_key = jirafeau_encrypt_file($p, $key, $p);
             if (strlen($crypt_key) > 0) {
                 $crypted = true;
             }
         }
-    } else{
-        error_log("");
+    } else {
+        error_log("PHP extension, openssl and mcrypt not loaded, won't encrypt in Jirafeau");
     }
     
     $hash = jirafeau_hash_file($file_hash_method, $p);
@@ -1080,14 +1098,14 @@ function jirafeau_async_end($ref, $code, $crypt, $link_name_length, $file_hash_m
     /* Create link. */
     $link_tmp_name =  VAR_LINKS . $hash . rand(0, 10000) . '.tmp';
     $handle = fopen($link_tmp_name, 'w');
-    $option = determinateOptionEncrypt($openssl, $mcrypt);
+    $option = determinateCrypt($cfg);
 
     /* File encrypt with openssl */
     fwrite(
         $handle,
         $a['file_name'] . NL . $a['mime_type'] . NL . $size . NL .
-            $a['key'] . NL . $a['time'] . NL . $hash . NL . $a['onetime'] . NL .
-            time() . NL . $a['ip'] . NL . $delete_link_code . NL . ($crypted ? $option : 'O')
+        $a['key'] . NL . $a['time'] . NL . $hash . NL . $a['onetime'] . NL .
+        time() . NL . $a['ip'] . NL . $delete_link_code . NL . ($crypted ? $option : 'O')
     );
     fclose($handle);
     $hash_link = substr(base_16_to_64(md5_file($link_tmp_name)), 0, $link_name_length);
@@ -1113,11 +1131,14 @@ function jirafeau_crypt_create_iv($base, $size)
 }
 
 /* File verification */
-function verification_check($file){
+function verification_check($file)
+{
     // File content verification
     $file_size = filesize($file);
-    if ($file_size === false || $file_size == 0){
-        return '';
+    if ($file_size === false || $file_size == 0) {
+        exit('Error: the file is empty');
+    } else {
+        return true;
     }
 }
 
@@ -1132,28 +1153,31 @@ function verification_check($file){
 function jirafeau_encrypt_file_openssl($fp_src, $key, $fp_dst)
 {
     // File content verification
-    verification_check($fp_src);
-    //Hash key
-    $hash_key = md5($key);
-    //vector initialization
-    $iv = jirafeau_crypt_create_iv($hash_key, openssl_cipher_iv_length('aes-128-cbc'));
-    $fpOut = fopen($fp_dst, 'c'); // 'c' Open the file for writing only. If the file does not exist, it will be created, if it exists, it is not truncated (unlike 'w')
-    // Put the initialzation vector to the beginning of the file
+    if(verification_check($fp_src) == true ) {
+        //Hash key
+        $hash_key = md5($key);
+        //vector initialization
+        $iv = jirafeau_crypt_create_iv($hash_key, openssl_cipher_iv_length('aes-128-cbc'));
+        $fpOut = fopen($fp_dst, 'c'); // 'c' Open the file for writing only. If the file does not exist, it will be created, if it exists, it is not truncated (unlike 'w')
+        // Put the initialzation vector to the beginning of the file
         $fpIn = fopen($fp_src, 'rb');
         /* Crypt file */ 
         // feof: as long as the end of the file is not reached
-            while (!feof($fpIn)) {
-                $plaintext = fread($fpIn, FILE_ENCRYPTION_BLOCKS);
-                $ciphertext = openssl_encrypt($plaintext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv);//OPENSSL_RAW_DATA: it will be understood as row data
-                // Use the first 16 bytes of the ciphertext as the next initialization vector
-                //Writing in the new encryption file
-                fwrite($fpOut, $ciphertext);
-            }
-            //Close files
+        while (!feof($fpIn)) {
+            $plaintext = fread($fpIn, FILE_ENCRYPTION_BLOCKS);
+            $ciphertext = openssl_encrypt($plaintext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv);//OPENSSL_RAW_DATA: it will be understood as row data
+            // Use the first 16 bytes of the ciphertext as the next initialization vector
+            //Writing in the new encryption file
+            fwrite($fpOut, $ciphertext);
+        }
+        //Close files
         fclose($fpIn);
         fclose($fpOut);
-
+        
         return $key;
+    } else {
+       error_log("PHP extension: the file is empty  ");
+    }
 }
 /**
  * Dencrypt the passed file and saves the result in a new file, removing the
@@ -1166,25 +1190,26 @@ function jirafeau_encrypt_file_openssl($fp_src, $key, $fp_dst)
  */
 function jirafeau_decrypt_file_openssl($fp_src, $key, $fp_dst)
 {
-        //File content verification
-        verification_check($fp_src);
+    //File content verification
+    if(verification_check($fp_src) == true) {
         $hash_key = md5($key);
         $iv = jirafeau_crypt_create_iv($hash_key, openssl_cipher_iv_length('aes-128-cbc'));
-    
         $fpOut = fopen($fp_dst, 'c');
         $fpIn = fopen($fp_src, 'rb'); 
-                //Get the initialzation vector from the beginning of the file
-                while (!feof($fpIn)) {
-                    $ciphertext = fread($fpIn,FILE_ENCRYPTION_BLOCKS); // we have to read one block more for decrypting than for encrypting
-                    $plaintext = openssl_decrypt($ciphertext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv);
-                    print $plaintext;
-                    // Use the first 16 bytes of the ciphertext as the next initialization vector
-                    fwrite($fpOut, $plaintext);
-                }
-                fclose($fpIn);
-            fclose($fpOut);
+        //Get the initialzation vector from the beginning of the file
+        while (!feof($fpIn)) {
+            $ciphertext = fread($fpIn,FILE_ENCRYPTION_BLOCKS); // we have to read one block more for decrypting than for encrypting
+            $plaintext = openssl_decrypt($ciphertext, 'AES-128-CBC', $hash_key, OPENSSL_RAW_DATA, $iv);
+            print $plaintext;
+            // Use the first 16 bytes of the ciphertext as the next initialization vector
+            fwrite($fpOut, $plaintext);
+        }
+        fclose($fpIn);
+        fclose($fpOut);
         return $fp_dst;
-
+    } else {
+        error_log("PHP extension: the file is empty  ");
+    }
 }
 /**
  * Crypt file and returns decrypt key.
@@ -1194,31 +1219,33 @@ function jirafeau_decrypt_file_openssl($fp_src, $key, $fp_dst)
  */
 function jirafeau_encrypt_file($fp_src, $fp_dst)
 {
-    verification_check($fp_src);
-
-    /* Prepare module. */
-    $m = mcrypt_module_open('rijndael-256', '', 'ofb', '');
-    /* Generate key. */
-    $crypt_key = jirafeau_gen_random(10);
-    $hash_key = md5($crypt_key);
-    $iv = jirafeau_crypt_create_iv($hash_key, mcrypt_enc_get_iv_size($m));
-    /* Init module. */
-    mcrypt_generic_init($m, $hash_key, $iv);
-    /* Crypt file. */
-    $r = fopen($fp_src, 'r');
-    $w = fopen($fp_dst, 'c');
-    while (!feof($r)) {
-        $enc = mcrypt_generic($m, fread($r, 1024));
-        if (fwrite($w, $enc) === false) {
-            return '';
+    if(verification_check($fp_src) == true ) {
+        /* Prepare module. */
+        $m = mcrypt_module_open('rijndael-256', '', 'ofb', '');
+        /* Generate key. */
+        $crypt_key = jirafeau_gen_random(10);
+        $hash_key = md5($crypt_key);
+        $iv = jirafeau_crypt_create_iv($hash_key, mcrypt_enc_get_iv_size($m));
+        /* Init module. */
+        mcrypt_generic_init($m, $hash_key, $iv);
+        /* Crypt file. */
+        $r = fopen($fp_src, 'r');
+        $w = fopen($fp_dst, 'c');
+        while (!feof($r)) {
+            $enc = mcrypt_generic($m, fread($r, 1024));
+            if (fwrite($w, $enc) === false) {
+                return '';
+            }
         }
+        fclose($r);
+        fclose($w);
+        /* Cleanup. */
+        mcrypt_generic_deinit($m);
+        mcrypt_module_close($m);
+        return $crypt_key;
+    } else {
+        error_log("PHP extension: the file is empty  ");
     }
-    fclose($r);
-    fclose($w);
-    /* Cleanup. */
-    mcrypt_generic_deinit($m);
-    mcrypt_module_close($m);
-    return $crypt_key;
 }
 
 /**
@@ -1230,29 +1257,31 @@ function jirafeau_encrypt_file($fp_src, $fp_dst)
  */
 function jirafeau_decrypt_file($fp_src, $fp_dst, $k)
 {
-    verification_check($fp_src);
-
-    /* Init module */
-    $m = mcrypt_module_open('rijndael-256', '', 'ofb', '');
-    /* Extract key and iv. */
-    $crypt_key = $k;
-    $hash_key = md5($crypt_key);
-    $iv = jirafeau_crypt_create_iv($hash_key, mcrypt_enc_get_iv_size($m));
-    /* Decrypt file. */
-    $r = fopen($fp_src, 'r');
-    $w = fopen($fp_dst, 'c');
-    while (!feof($r)) {
-        $dec = mdecrypt_generic($m, fread($r, 1024));
-        if (fwrite($w, $dec) === false) {
-            return false;
+    if(verification_check($fp_src) == true) {
+        /* Init module */
+        $m = mcrypt_module_open('rijndael-256', '', 'ofb', '');
+        /* Extract key and iv. */
+        $crypt_key = $k;
+        $hash_key = md5($crypt_key);
+        $iv = jirafeau_crypt_create_iv($hash_key, mcrypt_enc_get_iv_size($m));
+        /* Decrypt file. */
+        $r = fopen($fp_src, 'r');
+        $w = fopen($fp_dst, 'c');
+        while (!feof($r)) {
+            $dec = mdecrypt_generic($m, fread($r, 1024));
+            if (fwrite($w, $dec) === false) {
+                return false;
+            }
         }
+        fclose($r);
+        fclose($w);
+        /* Cleanup. */
+        mcrypt_generic_deinit($m);
+        mcrypt_module_close($m);
+        return true;
+    } else {
+        error_log("PHP extension: the file is empty  ");
     }
-    fclose($r);
-    fclose($w);
-    /* Cleanup. */
-    mcrypt_generic_deinit($m);
-    mcrypt_module_close($m);
-    return true;
 }
 
 /**
