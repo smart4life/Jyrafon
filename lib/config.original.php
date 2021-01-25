@@ -24,20 +24,9 @@
  * So if we read 10,000 blocks we load 160kb into memory. You may adjust this value
  * to read/write shorter or longer chunks.
  * see more : https://www.php.net/manual/fr/function.openssl-encrypt.php
- *            https://riptutorial.com/php/example/25499/symmetric-encryption-and-decryption-of-large-files-with-openssl  
+ *            https://riptutorial.com/php/example/25499/symmetric-encryption-and-decryption-of-large-files-with-openssl
  */
-define('FILE_ENCRYPTION_BLOCKS', 100000);
-
-/* Define Encryption
-*/
-//Crypt or no
-define('nocrypt', 'nocrypt');
-define('crypt', 'crypt');
-
-//Type of encryption
-define('openssl', 'openssl');
-define('mcrypt', 'mcrypt');
-define('autocrypt', 'autocrypt');
+$cfg['FILE_ENCRYPTION_BLOCKS'] = 100000;
 
 /**
  * Default configuration
@@ -87,11 +76,11 @@ $cfg['preview'] = true;
 $cfg['enable_crypt'] = false;
 
 /*Option of Encryption
-  Openssl: 'crypt' => 'openssl'
-  Mcrypt: 'crypt' => 'mcrypt'
-  Encryption automatic: 'crypt' => 'autocrypt'
+  Openssl: 'crypt' => 'encrypt_openssl'
+  Mcrypt: 'crypt' => 'encrypt_mcrypt'
+  Encryption automatic: 'crypt' => 'encrypt_autocrypt'
 */
-$cfg['crypt'] = 'autocrypt';
+$cfg['crypt'] = 'encrypt_autocrypt';
 
 /* Length of link reference
  */

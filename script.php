@@ -142,9 +142,9 @@ if (isset($_FILES['file']) && is_writable(VAR_FILES)
         $cfg,
         $cfg['link_name_length'],
         $cfg['file_hash']
-    ); 
+    );
 
-        if (empty($res) || $res['error']['has_error']) {
+    if (empty($res) || $res['error']['has_error']) {
         echo 'Error 6 ' . $res['error']['why'];
         exit;
     }
@@ -497,7 +497,9 @@ elseif (isset($_GET['push_async'])) {
             $cfg['maximal_upload_size']
         );
     }
-} else if (isset($_GET['end_async'])) { /* Finalize an asynchronous upload. */
+}
+/* Finalize an asynchronous upload. */
+elseif (isset($_GET['end_async'])) {
     if (!isset($_POST['ref'])
         || !isset($_POST['code'])) {
         echo 'Error 24';
