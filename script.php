@@ -481,7 +481,8 @@ elseif (isset($_GET['init_async'])) {
         isset($_POST['one_time_download']),
         $key,
         $time,
-        $ip
+        get_ip_address($cfg),
+        $cfg['http_auth_user'] ? $_SERVER['PHP_AUTH_USER'] : ''
     );
 }
 /* Continue an asynchronous upload. */
