@@ -19,6 +19,16 @@
  */
 
 /**
+ * Define the number of blocks that should be read from the file_path file for each chunk.
+ * For 'AES-128-CBC' each block consist of 16 bytes.
+ * So if we read 10,000 blocks we load 160kb into memory. You may adjust this value
+ * to read/write shorter or longer chunks.
+ * see more : https://www.php.net/manual/fr/function.openssl-encrypt.php
+ *            https://riptutorial.com/php/example/25499/symmetric-encryption-and-decryption-of-large-files-with-openssl
+ */
+$cfg['FILE_ENCRYPTION_BLOCKS'] = 100000;
+
+/**
  * Default configuration
  *
  * To overwrite these settings copy the file,
@@ -64,6 +74,13 @@ $cfg['preview'] = true;
  * By enabling it, file-level deduplication won't work anymore. See FAQ.
  */
 $cfg['enable_crypt'] = false;
+
+/*Option of Encryption
+  Openssl: 'crypt' => 'encrypt_openssl'
+  Mcrypt: 'crypt' => 'encrypt_mcrypt'
+  Encryption automatic: 'crypt' => 'encrypt_autocrypt'
+*/
+$cfg['crypt'] = 'encrypt_autocrypt';
 
 /* Length of link reference
  */

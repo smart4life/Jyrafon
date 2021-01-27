@@ -251,24 +251,26 @@ if ($cfg['litespeed_workaround']) {
     }
 }
 /* Read encrypted file. */
-elseif ($link['crypted']) {
-    /* Init module */
-    $m = mcrypt_module_open('rijndael-256', '', 'ofb', '');
-    /* Extract key and iv. */
-    $hash_key = md5($crypt_key);
-    $iv = jirafeau_crypt_create_iv($hash_key, mcrypt_enc_get_iv_size($m));
-    /* Init module. */
-    mcrypt_generic_init($m, $hash_key, $iv);
-    /* Decrypt file. */
-    $r = fopen(VAR_FILES . $p . $link['hash'], 'r');
-    while (!feof($r)) {
-        $dec = mdecrypt_generic($m, fread($r, 1024));
-        print $dec;
+elseif ($cfg['enable_crypt'] == true) {
+    switch ($cfg['crypt']) {
+            case encrypt_openssl:
+                jirafeau_decrypt_file_openssl($link, $p, $crypt_key, $cfg);
+                break;
+            case encrypt_mcrypt:
+                jirafeau_decrypt_file_mcrypt($link, $p, $crypt_key, $cfg);
+                break;
+            case encrypt_autocrypt:
+                $option = determinateOptionEncrypt($cfg);
+                if ($option == 'AS') {
+                    jirafeau_decrypt_file_openssl($link, $p, $crypt_key, $cfg);
+                } elseif ($option == 'AC') {
+                    jirafeau_decrypt_file_mcrypt($link, $p, $crypt_key, $cfg);
+                }
+                break;
+        default:
+            error_log("PHP extension incorrect syntax in config 'crypt', see config.local.php, won't encrypt in Jirafeau");
+            break;
     }
-    fclose($r);
-    /* Cleanup. */
-    mcrypt_generic_deinit($m);
-    mcrypt_module_close($m);
 }
 /* Read file. */
 else {
