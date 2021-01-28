@@ -444,7 +444,7 @@ function determinateCrypt($cfg)
  *   'link' => the link name of the uploaded file
  *   'delete_link' => the link code to delete file
  */
-function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $cfg, $link_name_length, $file_hash_method, $user_name)
+function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $cfg, $link_name_length, $file_hash_method, $user_name = '')
 {
     if (empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
         return (array(
@@ -995,7 +995,7 @@ function jirafeau_async_delete($ref)
   * @param $user_name Optional user_name of author
   * @return a string containing a temporary reference followed by a code or the string 'Error'
   */
-function jirafeau_async_init($filename, $type, $one_time, $key, $time, $ip, $user_name)
+function jirafeau_async_init($filename, $type, $one_time, $key, $time, $ip, $user_name = '')
 {
     $res = 'Error';
 
