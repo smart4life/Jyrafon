@@ -922,7 +922,6 @@ function jirafeau_clean_async($use_user_name, $user_name)
                 if (!count($a)) {
                     continue;
                 }
-
                 if ($use_user_name && !empty($a['user_name']) && $a['user_name'] !== $user_name) {
                     continue;
                 }
