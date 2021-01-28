@@ -285,6 +285,16 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
 
 </div>
 
+<?php
+if (!empty($cfg['http_auth_user']) && $_SERVER['PHP_AUTH_USER']) {
+        ?>
+<div id="history">
+    <a id="history_link" href="history.php"><?php echo t('HISTORY') ?></a>
+</div>
+<?php
+    }
+?>
+
 <script type="text/javascript" lang="Javascript">
 // @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later
     document.getElementById('error_pop').style.display = 'none';

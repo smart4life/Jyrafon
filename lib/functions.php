@@ -444,7 +444,7 @@ function determinateCrypt($cfg)
  *   'link' => the link name of the uploaded file
  *   'delete_link' => the link code to delete file
  */
-function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $cfg, $link_name_length, $file_hash_method)
+function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $cfg, $link_name_length, $file_hash_method, $user_name = '')
 {
     if (empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
         return (array(
@@ -560,7 +560,8 @@ function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $cfg, $lin
         $handle,
         $name . NL. $mime_type . NL. $size . NL. $password . NL. $time .
             NL . $hash. NL . ($one_time_download ? 'O' : 'R') . NL . time() .
-            NL . $ip . NL. $delete_link_code . NL . ($crypted ? $option : 'O')
+            NL . $ip . NL. $delete_link_code . NL . ($crypted ? $option : 'O') .
+            NL . $user_name
     );
     fclose($handle);
     $hash_link = substr(base_16_to_64(md5_file($link_tmp_name)), 0, $link_name_length);
@@ -703,14 +704,25 @@ function jirafeau_get_link($hash)
     $out['ip'] = trim($c[8]);
     $out['link_code'] = trim($c[9]);
     $out['crypted'] = trim($c[10]) == 'C';
+    $out['user_name'] = trim($c[11]);
 
     return $out;
+}
+
+function jirafeau_user_list($name, $file_hash, $link_hash, $user_name)
+{
+    jirafeau_list($name, $file_hash, $link_hash, true, $user_name);
+}
+
+function jirafeau_admin_list($name, $file_hash, $link_hash)
+{
+    jirafeau_list($name, $file_hash, $link_hash, false, null);
 }
 
 /**
  * List files in admin interface.
  */
-function jirafeau_admin_list($name, $file_hash, $link_hash)
+function jirafeau_list($name, $file_hash, $link_hash, $use_user_name, $user_name)
 {
     echo '<fieldset><legend>';
     if (!empty($name)) {
@@ -752,6 +764,9 @@ function jirafeau_admin_list($name, $file_hash, $link_hash)
                 }
 
                 /* Filter. */
+                if ($use_user_name && (empty($l['user_name']) || $l['user_name'] !== $user_name)) {
+                    continue;
+                }
                 if (!empty($name) && !@preg_match("/$name/i", jirafeau_escape($l['file_name']))) {
                     continue;
                 }
@@ -805,7 +820,25 @@ function jirafeau_admin_list($name, $file_hash, $link_hash)
  * Clean expired files.
  * @return number of cleaned files.
  */
+function jirafeau_user_clean($user_name)
+{
+    return jirafeau_clean(true, $user_name);
+}
+
+/**
+ * Clean expired files.
+ * @return number of cleaned files.
+ */
 function jirafeau_admin_clean()
+{
+    return jirafeau_clean(false, null);
+}
+
+/**
+ * Clean expired files.
+ * @return number of cleaned files.
+ */
+function jirafeau_clean($use_user_name, $user_name)
 {
     $count = 0;
     /* Get all links files. */
@@ -828,6 +861,9 @@ function jirafeau_admin_clean()
                 if (!count($l)) {
                     continue;
                 }
+                if ($use_user_name && (empty($l['user_name']) || $l['user_name'] !== $user_name)) {
+                    continue;
+                }
                 $p = s2p($l['hash']);
                 if ($l['time'] > 0 && $l['time'] < time() || // expired
                     !file_exists(VAR_FILES . $p . $l['hash']) || // invalid
@@ -841,12 +877,29 @@ function jirafeau_admin_clean()
     return $count;
 }
 
+/**
+ * Clean old async transferts.
+ * @return number of cleaned files.
+ */
+function jirafeau_user_clean_async($user_name)
+{
+    return jirafeau_clean_async(true, $user_name);
+}
 
 /**
  * Clean old async transferts.
  * @return number of cleaned files.
  */
 function jirafeau_admin_clean_async()
+{
+    return jirafeau_clean_async(false, null);
+}
+
+/**
+ * Clean old async transferts.
+ * @return number of cleaned files.
+ */
+function jirafeau_clean_async($use_user_name, $user_name)
 {
     $count = 0;
     /* Get all links files. */
@@ -869,6 +922,10 @@ function jirafeau_admin_clean_async()
                 if (!count($a)) {
                     continue;
                 }
+                if ($use_user_name && !empty($a['user_name']) && $a['user_name'] !== $user_name) {
+                    continue;
+                }
+
                 /* Delete transferts older than 1 hour. */
                 if (time() - $a['last_edited'] > 3600) {
                     jirafeau_async_delete(basename($node));
@@ -901,6 +958,7 @@ function jirafeau_get_async_ref($ref)
     $out['ip'] = trim($c[5]);
     $out['last_edited'] = trim($c[6]);
     $out['next_code'] = trim($c[7]);
+    $out['user_name'] = trim($c[8]);
     return $out;
 }
 
@@ -934,9 +992,10 @@ function jirafeau_async_delete($ref)
   * @param $key eventual password (or blank)
   * @param $time time limit
   * @param $ip ip address of the client
+  * @param $user_name Optional user_name of author
   * @return a string containing a temporary reference followed by a code or the string 'Error'
   */
-function jirafeau_async_init($filename, $type, $one_time, $key, $time, $ip)
+function jirafeau_async_init($filename, $type, $one_time, $key, $time, $ip, $user_name = '')
 {
     $res = 'Error';
 
@@ -972,7 +1031,7 @@ function jirafeau_async_init($filename, $type, $one_time, $key, $time, $ip)
         str_replace(NL, '', trim($filename)) . NL .
             str_replace(NL, '', trim($type)) . NL . $password . NL .
             $time . NL . ($one_time ? 'O' : 'R') . NL . $ip . NL .
-            time() . NL . $code . NL
+            time() . NL . $code . NL . $user_name . NL
     );
     fclose($handle);
 
@@ -1035,7 +1094,7 @@ function jirafeau_async_push($ref, $data, $code, $max_file_size)
         $handle,
         $a['file_name'] . NL. $a['mime_type'] . NL. $a['key'] . NL .
             $a['time'] . NL . $a['onetime'] . NL . $a['ip'] . NL .
-            time() . NL . $code . NL
+            time() . NL . $code . NL . $a['user_name'] . NL
     );
     fclose($handle);
     return $code;
@@ -1146,7 +1205,8 @@ function jirafeau_async_end($ref, $code, $cfg, $link_name_length, $file_hash_met
         $handle,
         $a['file_name'] . NL . $a['mime_type'] . NL . $size . NL .
             $a['key'] . NL . $a['time'] . NL . $hash . NL . $a['onetime'] . NL .
-            time() . NL . $a['ip'] . NL . $delete_link_code . NL . ($crypted ? $option : 'O')
+            time() . NL . $a['ip'] . NL . $delete_link_code . NL . ($crypted ? $option : 'O') .
+            NL . $a['user_name']
     );
     fclose($handle);
     $hash_link = substr(base_16_to_64(md5_file($link_tmp_name)), 0, $link_name_length);
@@ -1571,10 +1631,26 @@ function jirafeau_escape($string)
     return htmlspecialchars($string, ENT_QUOTES);
 }
 
+function jirafeau_user_session_start()
+{
+    jirafeau_session_start('user');
+}
+
 function jirafeau_admin_session_start()
 {
-    $_SESSION['admin_auth'] = true;
-    $_SESSION['admin_csrf'] = md5(uniqid(mt_rand(), true));
+    jirafeau_session_start('admin');
+}
+
+function jirafeau_session_start($type)
+{
+    $_SESSION[jirafeau_csrf_auth_name($type)] = true;
+    $_SESSION[jirafeau_csrf_field_name($type)] = md5(uniqid(mt_rand(), true));
+}
+
+function jirafeau_user_session_end()
+{
+    $_SESSION = array();
+    session_destroy();
 }
 
 function jirafeau_admin_session_end()
@@ -1583,18 +1659,51 @@ function jirafeau_admin_session_end()
     session_destroy();
 }
 
+function jirafeau_user_session_logged()
+{
+    return jirafeau_session_logged('user');
+}
+
 function jirafeau_admin_session_logged()
 {
-    return isset($_SESSION['admin_auth']) &&
-           isset($_SESSION['admin_csrf']) &&
-           isset($_POST['admin_csrf']) &&
-           $_SESSION['admin_auth'] === true &&
-           $_SESSION['admin_csrf'] === $_POST['admin_csrf'];
+    return jirafeau_session_logged('admin');
+}
+
+function jirafeau_session_logged($type)
+{
+    $type_auth = jirafeau_csrf_auth_name($type);
+    $type_csrf = jirafeau_csrf_field_name($type);
+    return isset($_SESSION[$type_auth]) &&
+           isset($_SESSION[$type_csrf]) &&
+           isset($_POST[$type_csrf]) &&
+           $_SESSION[$type_auth] === true &&
+           $_SESSION[$type_csrf] === $_POST[$type_csrf];
+}
+
+function jirafeau_csrf_field_name($type)
+{
+    return $type . '_csrf';
+}
+
+function jirafeau_csrf_auth_name($type)
+{
+    return $type . '_auth';
+}
+
+function jirafeau_user_csrf_field()
+{
+    return jirafeau_csrf_field('user');
 }
 
 function jirafeau_admin_csrf_field()
 {
-    return "<input type='hidden' name='admin_csrf' value='". $_SESSION['admin_csrf'] . "'/>";
+    return jirafeau_csrf_field('admin');
+}
+
+function jirafeau_csrf_field($type)
+{
+    $type_csrf = jirafeau_csrf_field_name($type);
+    return "<input type='hidden' name='" . $type_csrf . "' value='". $_SESSION[$type_csrf] . "'/>";
 }
 
 function jirafeau_dir_size($dir)
