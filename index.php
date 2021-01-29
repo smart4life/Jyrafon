@@ -295,12 +295,13 @@ if (!empty($cfg['http_auth_user']) && $_SERVER['PHP_AUTH_USER']) {
     }
 ?>
 
+//Form send mail
 <div id="ConteneurFormMail">
     <form action="" method="post" id="form">
         <input name="transmitter" type="text" placeholder="Your email" id="transmitter" required/>
         <input name="recipient" type="text" placeholder="Recipient" id="recipient" required/>
         <textarea name="message" id="message" placeholder="Message" rows="5" cols="33"></textarea>
-        <button id="button_send_mail" onclick="<?php jirafeau_send_mail($_POST['transmitter'], $_POST['recipient'], $_POST['message']) == $result ?>" required> Send</button>
+        <button id="button_send_mail" onclick="<?php jirafeau_send_mail($_POST['transmitter'], $_POST['recipient'], $_POST['message'])?>" required>Send</button>
     </form>
 </div>
 
