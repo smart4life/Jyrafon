@@ -1781,3 +1781,37 @@ function jirafeau_add_ending_slash($path)
 {
     return $path . ((substr($path, -1) == '/') ? '' : '/');
 }
+
+/**
+ * Function allowing the sending of mail from a form
+ * see more : https://www.php.net/manual/fr/function.mail.php
+ * @param $transmitter: the transmitter of the email
+ * @param $recipient: the recipient of the email
+ * @param $message is the message of the email
+ * @return true if the mail send.
+ */
+function jirafeau_send_mail($transmitter, $recipient, $message)
+{
+    $message = ' <html>
+                    <head>
+                        <img src="https://framalibre.org/sites/default/files/leslogos/JirafeauLogo.jpeg">
+                        <title style="color:#663d1c">Jirafeau: Dowload links</title>
+                    </head>
+                    <body>
+                        <p>' . $message .'</p>
+                    </body>
+                </html> ';
+    $email_subject = 'Jirafeau: download link';
+    $headers[] = "MIME-Version: 1.0";
+    $headers[] = "X-Priority : 1";
+    $headers[] = "Content-type: text/html; charset=utf-8";
+    $headers[] = "Content-Transfer-Encoding: 8bit";
+    $headers[] = "From:" . $transmitter ;
+    $headers[] = "X-Mailer: PHP/" . phpversion();
+
+    if (mail($recipient, $email_subject, $message, implode("\r\n", $headers)) == true) {
+        echo('Succes: Your email has been sent');
+    } else {
+        echo('Error: Your email was not sent');
+    }
+}

@@ -103,7 +103,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <div id="upload_finished_download_page">
     <p>
         <a id="upload_link" href=""><?php echo t('DL_PAGE') ?></a>
-        <a id="upload_link_email" href=""><img id="upload_image_email"/></a>
+        <a onclick="toggleContent()"><img id="upload_image_email"/></a>
     </p><p>
         <code id=upload_link_text></code>
         <button id="upload_link_button">&#128203;</button>
@@ -294,6 +294,15 @@ if (!empty($cfg['http_auth_user']) && $_SERVER['PHP_AUTH_USER']) {
 <?php
     }
 ?>
+
+<div id="ConteneurFormMail">
+    <form action="" method="post" id="form">
+        <input name="transmitter" type="text" placeholder="Your email" id="transmitter" required/>
+        <input name="recipient" type="text" placeholder="Recipient" id="recipient" required/>
+        <textarea name="message" id="message" placeholder="Message" rows="5" cols="33"></textarea>
+        <button id="button_send_mail" onclick="<?php jirafeau_send_mail($_POST['transmitter'], $_POST['recipient'], $_POST['message'])?>"> Send</button>
+    </form>
+</div>
 
 <script type="text/javascript" lang="Javascript">
 // @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later

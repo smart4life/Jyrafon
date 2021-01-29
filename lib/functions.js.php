@@ -150,7 +150,9 @@ function show_link (reference, delete_code, crypt_key, date)
     if (false == isEmpty(date))
     {
         b += "%0D" + "%0A" + encodeURIComponent("<?php echo t("VALID_UNTIL"); ?>: " + date.format('YYYY-MM-DD hh:mm (GMT O)')) + "%0D" + "%0A";
-        document.getElementById('upload_link_email').href = "mailto:?body=" + b + "&subject=" + encodeURIComponent(filename);
+        ////document.getElementById('upload_link_email').href = "mailto:?body=" + b + "&subject=" + encodeURIComponent(filename);
+        //Send the link in the message field of the form
+        document.getElementById('message').textContent = "Dowload Link: " + web_root + download_link_href + "\n";
     }
 
     // Delete link
@@ -784,3 +786,16 @@ function addCopyListener(button_id, link_id) {
     }
 }
 // @license-end
+
+//Toggle form
+function toggleContent() {
+    // Get the DOM reference
+    var contentId = document.getElementById("form");
+    // Toggle
+    contentId.style.display == "block" ? contentId.style.display = "none" : contentId.style.display = "block";
+}
+
+// window alert
+function alert(text) {
+    alert(text);
+}
