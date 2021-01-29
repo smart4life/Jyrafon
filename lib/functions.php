@@ -1790,16 +1790,29 @@ function jirafeau_add_ending_slash($path)
  * @param $message is the message of the email
  * @return true if the mail send.
  */
-function jirafeau_send_mail($transmitter, $recipient, $message)
+function jirafeau_send_mail($transmitter, $recipient, $message, $link)
 {
     $message = ' <html>
+                    <style>
+                        h1 {
+                        color:#663d1c;
+                        } 
+                    </style>
                     <head>
-                        <img src="https://framalibre.org/sites/default/files/leslogos/JirafeauLogo.jpeg">
-                        <title style="color:#663d1c;">Jirafeau</title>
+                    <title>Jirafeau</title>
                     </head>
                     <body>
-                        <h1 style="color:#663d1c;">Jirafeau</h1>
-                        <p>' . $message .'</p>
+                    <img src="https://framalibre.org/sites/default/files/leslogos/JirafeauLogo.jpeg" alt="Logo Jirafeau" />
+                    <h1>Jirafeau</h1>
+                        <h3>Dowload link:</h3>
+                        <ul>
+                            <li>' . $link .'</li>
+                        </ul>
+                        </br>
+                        <h3>Message:</h3>
+                        <ul>
+                            <li>' . $message .'</li>
+                        </ul>
                     </body>
                 </html> ';
     $email_subject = 'Jirafeau: download link';
