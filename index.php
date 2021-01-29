@@ -295,7 +295,7 @@ if (!empty($cfg['http_auth_user']) && $_SERVER['PHP_AUTH_USER']) {
     }
 ?>
 
-//Form send mail
+<!--- Form send mail -->
 <div id="ConteneurFormMail">
     <form action="" method="post" id="form">
         <input name="transmitter" type="text" placeholder="Your email" id="transmitter" required/>

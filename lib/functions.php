@@ -1795,9 +1795,10 @@ function jirafeau_send_mail($transmitter, $recipient, $message)
     $message = ' <html>
                     <head>
                         <img src="https://framalibre.org/sites/default/files/leslogos/JirafeauLogo.jpeg">
-                        <title style="color:#663d1c">Jirafeau: Dowload links</title>
+                        <title style="color:#663d1c;">Jirafeau</title>
                     </head>
                     <body>
+                        <h1 style="color:#663d1c;">Jirafeau</h1>
                         <p>' . $message .'</p>
                     </body>
                 </html> ';
