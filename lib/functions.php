@@ -1813,6 +1813,10 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link)
                         <ul>
                             <li>' . $message .'</li>
                         </ul>
+                        <h3>Date d\'upload:</h3>
+                        <ul>
+                            <li>' . date('l jS \of F Y h:i:s A') .'</li>
+                        </ul>
                     </body>
                 </html> ';
     $email_subject = 'Jirafeau: download link';

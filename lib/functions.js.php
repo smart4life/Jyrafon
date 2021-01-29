@@ -149,7 +149,8 @@ function show_link (reference, delete_code, crypt_key, date)
     b += encodeURIComponent(web_root + download_link_href) + "%0D" + "%0A";
     if (false == isEmpty(date))
     {
-        b += "%0D" + "%0A" + encodeURIComponent("<?php echo t("VALID_UNTIL"); ?>: " + date.format('YYYY-MM-DD hh:mm (GMT O)')) + "%0D" + "%0A";
+        //Send download link by mailto
+        ////b += "%0D" + "%0A" + encodeURIComponent("<?php echo t("VALID_UNTIL"); ?>: " + date.format('YYYY-MM-DD hh:mm (GMT O)')) + "%0D" + "%0A";
         ////document.getElementById('upload_link_email').href = "mailto:?body=" + b + "&subject=" + encodeURIComponent(filename);
         //Send the link in the message field of the form
         document.getElementById('link').textContent = web_root + download_link_href + "\n";
