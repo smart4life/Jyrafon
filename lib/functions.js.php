@@ -794,8 +794,3 @@ function toggleContent() {
     // Toggle
     contentId.style.display == "block" ? contentId.style.display = "none" : contentId.style.display = "block";
 }
-
-// window alert
-function alert(text) {
-    alert(text);
-}
