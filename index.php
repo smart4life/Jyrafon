@@ -103,10 +103,10 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <div id="upload_finished_download_page">
     <p>
         <a id="upload_link" href=""><?php echo t('DL_PAGE') ?></a>
-        <a onclick="toggleContent()"><img id="upload_image_email"/></a>
+        <a id="upload_link_email" href=""><img id="upload_image_email"/></a>
     </p><p>
         <code id=upload_link_text></code>
-        <button id="upload_link_button">&#128203;</button>
+        <button id="upload_link_button" onclick="addClass()">&#128203;</button>
     </p>
     </div>
 
@@ -144,6 +144,22 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <div id="upload_validity">
     <p><?php echo t('VALID_UNTIL'); ?>:</p>
     <p id="date"></p>
+    </div>
+
+    <!--- Form send mail -->
+    <div id="ConteneurFormMail">
+        <form action="" method="post" id="form">
+            <div id="data">
+                <textarea name="filename" id="filename"></textarea>
+                <textarea name="expireDate" id="expireDate"></textarea>
+                <textarea name="link" id="link"></textarea>
+            </div>
+            <input name="transmitter" type="text" placeholder="<?php echo t('TRANSMITTER'); ?>" id="transmitter" required/>
+            <input name="recipient" type="text" placeholder="<?php echo t('RECIPIENT'); ?>" id="recipient" required/>
+            <input name="subject" id="subject" placeholder="<?php echo t('MAIL_SUBJECT'); ?>" required></input>
+            <textarea name="message" id="message" placeholder="<?php echo t('MESSAGE'); ?>" rows="5" cols="33"></textarea>
+            <button id="button_send_mail" onclick="<?php jirafeau_send_mail($_POST['transmitter'], $_POST['recipient'], $_POST['message'], $_POST['link'], $_POST['subject'], $_POST['filename'], $_POST['expireDate'])?>" required>Send</button>
+        </form>
     </div>
 </div>
 
@@ -294,17 +310,6 @@ if (!empty($cfg['http_auth_user']) && $_SERVER['PHP_AUTH_USER']) {
 <?php
     }
 ?>
-
-<!--- Form send mail -->
-<div id="ConteneurFormMail">
-    <form action="" method="post" id="form">
-        <input name="transmitter" type="text" placeholder="Your email" id="transmitter" required/>
-        <input name="recipient" type="text" placeholder="Recipient" id="recipient" required/>
-        <textarea name="link" id="link" placeholder="link" rows="3" cols="33" required></textarea>
-        <textarea name="message" id="message" placeholder="Message" rows="5" cols="33"></textarea>
-        <button id="button_send_mail" onclick="<?php jirafeau_send_mail($_POST['transmitter'], $_POST['recipient'], $_POST['message'], $_POST['link'])?>" required>Send</button>
-    </form>
-</div>
 
 <script type="text/javascript" lang="Javascript">
 // @license magnet:?xt=urn:btih:0b31508aeb0634b347b8270c7bee4d411b5d4109&dn=agpl-3.0.txt AGPL-v3-or-Later

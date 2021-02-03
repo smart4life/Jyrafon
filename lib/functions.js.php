@@ -150,10 +150,11 @@ function show_link (reference, delete_code, crypt_key, date)
     if (false == isEmpty(date))
     {
         //Send download link by mailto
-        ////b += "%0D" + "%0A" + encodeURIComponent("<?php echo t("VALID_UNTIL"); ?>: " + date.format('YYYY-MM-DD hh:mm (GMT O)')) + "%0D" + "%0A";
-        ////document.getElementById('upload_link_email').href = "mailto:?body=" + b + "&subject=" + encodeURIComponent(filename);
+        b += "%0D" + "%0A" + encodeURIComponent("<?php echo t("VALID_UNTIL"); ?>: " + date.format('YYYY-MM-DD hh:mm (GMT O)')) + "%0D" + "%0A";
+        document.getElementById('upload_link_email').href = "mailto:?body=" + b + "&subject=" + encodeURIComponent(filename);
         //Send the link in the message field of the form
-        document.getElementById('link').textContent = web_root + download_link_href + "\n";
+        document.getElementById('link').textContent = web_root + download_link_href;
+        document.getElementById('filename').textContent = filename;
     }
 
     // Delete link
@@ -173,6 +174,7 @@ function show_link (reference, delete_code, crypt_key, date)
             + '</span>';
         document.getElementById('date').style.display = '';
     }
+    document.getElementById('expireDate').textContent = date.format('YYYY-MM-DD hh:mm (GMT O)');
 
     // Preview link (if allowed)
     if (!!document.getElementById('preview_link'))
@@ -788,10 +790,3 @@ function addCopyListener(button_id, link_id) {
 }
 // @license-end
 
-//Toggle form
-function toggleContent() {
-    // Get the DOM reference
-    var contentId = document.getElementById("form");
-    // Toggle
-    contentId.style.display == "block" ? contentId.style.display = "none" : contentId.style.display = "block";
-}

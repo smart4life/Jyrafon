@@ -480,7 +480,6 @@ textarea[readonly="readonly"] + p + p a:focus {
 }
 
 #form {
-  display: none;
   position: relative;
   background: #FFFFFF;
   max-width: 360px;
@@ -499,6 +498,15 @@ form input {
   padding: 15px;
   box-sizing: border-box;
   font-size: 14px;
+}
+
+#data {
+  display:none;
+}
+
+.AddClassCopy {
+  color:red;
+  background-color:black;
 }
 
 form textarea {

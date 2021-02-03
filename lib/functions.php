@@ -1790,43 +1790,93 @@ function jirafeau_add_ending_slash($path)
  * @param $message is the message of the email
  * @return true if the mail send.
  */
-function jirafeau_send_mail($transmitter, $recipient, $message, $link)
+function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_subject, $filename, $expireDate)
 {
-    $message = ' <html>
+    $message = '<html>
                     <style>
-                        h1 {
+                    h1 {
                         color:#663d1c;
-                        } 
+                    }
+                    body {
+                        justify-content:center;
+                        display: flex;
+                    }
+                    strong {
+                        color: #663d1c;
+                    }
+                    #expireFile {
+                        font-size: 14px;
+                        margin-top: 0px;
+                    }
+                    h3 {
+                        margin: 0px;
+                    }
+                    .block {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        margin-top:20px;
+                        margin-bottom:20px;
+                    }
+                    #text {
+                        margin: 30px;
+                    }
+                    button {
+                        text-transform: uppercase;
+                        outline: 2px;
+                        background: #663d1c;
+                        width: 35%;
+                        padding: 15px;
+                        color: #FFFFFF;
+                        font-size: 14px;
+                        cursor: pointer;
+                        border-radius: 20px;
+                    }
+                    footer {
+                        font-size: 12px;
+                        display: flex;
+                        flex-direction:column;
+                        align-items: center;
+                    }
+                    #mail {
+                        background-color:#f4f4f4;
+                        max-width: 60%;
+                        display:flex;
+                        flex-direction: column;
+                        align-items:center;
+                    }
                     </style>
                     <head>
                     <title>Jirafeau</title>
                     </head>
                     <body>
-                    <img src="https://framalibre.org/sites/default/files/leslogos/JirafeauLogo.jpeg" alt="Logo Jirafeau" />
-                    <h1>Jirafeau</h1>
-                        <h3>Dowload link:</h3>
-                        <ul>
-                            <li>' . $link .'</li>
-                        </ul>
-                        </br>
-                        <h3>Message:</h3>
-                        <ul>
-                            <li>' . $message .'</li>
-                        </ul>
-                        <h3>Date d\'upload:</h3>
-                        <ul>
-                            <li>' . date('l jS \of F Y h:i:s A') .'</li>
-                        </ul>
-                    </body>
+                    <div id="mail">
+                        <h1>Jirafeau</h1>
+                        <div class="block">
+                            <h2>
+                                <strong>' . $transmitter . '</strong> sent you a file
+                            </h2>
+                            <p id="expireFile">Expires on ' . $expireDate . '</p>
+                        </div>
+                         <div id="text">
+                            <p>Je suis le message example de test</p>
+                        </div>
+                        <button href=' . $link .'>Get your file</button>
+                        <div class="block">
+                            <h3>Dowload link:</h3>
+                            <p>' . $link . '</p>
+                            <h3>Files: ' . $filename .'</h3>
+                        </div>
+                        <p id="footer">To make sure our emails arrive, please add noreply@send.smart4.io to your contacts.</p>
+                    </div>
                 </html> ';
-    $email_subject = 'Jirafeau: download link';
+    $headers[] = "Reply-to:" . $transmitter;
+    $headers[] = 'To: '.$recipient.' <'.$recipient.'>';
+    $headers[] = "Importance: Normal";
     $headers[] = "MIME-Version: 1.0";
-    $headers[] = "X-Priority : 1";
     $headers[] = "Content-type: text/html; charset=utf-8";
-    $headers[] = "Content-Transfer-Encoding: 8bit";
-    $headers[] = "From:" . $transmitter ;
-    $headers[] = "X-Mailer: PHP/" . phpversion();
-
+    $headers[] = 'From: '.$transmitter.' <'.$transmitter.'>';
+    $headers[] = 'Delivered-to: '.$recipient;
     if (mail($recipient, $email_subject, $message, implode("\r\n", $headers)) == true) {
         echo('Succes: Your email has been sent');
     } else {
