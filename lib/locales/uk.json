@@ -1,4 +1,8 @@
 {
+    "TRANSMITTER":"",
+    "RECIPIENT":"",
+    "MAIL_SUBJECT":"",
+    "MESSAGE":"",
     "SIZE_DATA": "Розмір даних",
     "NO_BROWSER_SUPPORT": "Ваш веб-переглядач може не підтримує HTML5, тому найбільший розмір файлу - це ",
     "PLURAL_ENDING": "(-ів)",

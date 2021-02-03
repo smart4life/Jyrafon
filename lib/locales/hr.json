@@ -1,4 +1,8 @@
 {
+    "TRANSMITTER":"",
+    "RECIPIENT":"",
+    "MAIL_SUBJECT":"",
+    "MESSAGE":"",
     "HISTORY": "",
     "SIZE_DATA": "Veličina podataka",
     "INCOMPATIBLE_OPTIONS_W": "Sljedeće opcije konfiguracije su nekompatibilne:",

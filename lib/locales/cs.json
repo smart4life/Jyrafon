@@ -1,4 +1,8 @@
 {
+    "TRANSMITTER":"Vysílač",
+    "RECIPIENT":"Příjemce",
+    "MAIL_SUBJECT":"",
+    "MESSAGE":"",
     "HISTORY": "",
     "SIZE_DATA": "",
     "INCOMPATIBLE_OPTIONS_W": "",

@@ -1,4 +1,8 @@
 {
+    "TRANSMITTER":"",
+    "RECIPIENT":"",
+    "MAIL_SUBJECT":"",
+    "MESSAGE":"",
     "HISTORY": "",
     "SIZE_DATA": "Tamanho dos dados",
     "NO_BROWSER_SUPPORT": "O seu navegador pode não suportar HTML5, então o tamanho máximo do ficheiro é ",

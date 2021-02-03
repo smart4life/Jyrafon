@@ -1,4 +1,8 @@
 {
+    "TRANSMITTER":"modtager",
+    "RECIPIENT":"",
+    "MAIL_SUBJECT":"",
+    "MESSAGE":"",
     "HISTORY": "",
     "SIZE_DATA": "",
     "INCOMPATIBLE_OPTIONS_W": "",

@@ -1,4 +1,8 @@
 {
+    "TRANSMITTER":"",
+    "RECIPIENT":"",
+    "MAIL_SUBJECT":"",
+    "MESSAGE":"",
     "HISTORY": "History",
     "SIZE_DATA": "Data size",
     "INCOMPATIBLE_OPTIONS_W": "The following configuration options are incompatible:",

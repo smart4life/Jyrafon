@@ -1,4 +1,8 @@
 {
+    "TRANSMITTER":"",
+    "RECIPIENT":"",
+    "MAIL_SUBJECT":"",
+    "MESSAGE":"",
     "HISTORY": "",
     "SIZE_DATA": "Veri boyutu",
     "INCOMPATIBLE_OPTIONS_W": "Aşağıdaki yapılandırma seçenekleri uyumsuz:",

@@ -1,4 +1,8 @@
 {
+    "TRANSMITTER":"",
+    "RECIPIENT":"",
+    "MAIL_SUBJECT":"",
+    "MESSAGE":"",
     "HISTORY": "",
     "SIZE_DATA": "Data storlek",
     "INCOMPATIBLE_OPTIONS_W": "Följande inställningar är inkompatibla:",
