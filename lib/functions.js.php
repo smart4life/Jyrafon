@@ -769,7 +769,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
 function copyLinkToClipboard(link_id) {
     var focus = document.activeElement;
     var e = document.getElementById(link_id);
-
     var tmp = document.createElement("textarea");
     document.body.appendChild(tmp);
     tmp.textContent = e.href;
@@ -782,11 +781,27 @@ function copyLinkToClipboard(link_id) {
 }
 
 function addCopyListener(button_id, link_id) {
-    if(document.getElementById(button_id)){
-        document.getElementById(button_id)
-            .addEventListener("click", function() {
-                copyLinkToClipboard(link_id);});
+    if(document.getElementById(button_id)) {
+        document.getElementById(button_id).addEventListener("click", function() {
+            copyLinkToClipboard(link_id);
+            let element = document.getElementById(button_id);
+            if (element.classList) {
+                element.classList.toggle("Copy");
+            } else {
+                let classes = element.className.split(" ");
+                let i = classes.indexOf("Copy");
+                if (i >= 0)
+                    classes.splice(i, 1);
+                else
+                    classes.push("Copy");
+                    element.className = classes.join(" ");
+            }
+        })
     }
 }
-// @license-end
 
+function getPassword() {
+    let password = document.getElementById("input_key").value;
+    document.getElementById('password').textContent = password;
+}
+// @license-end

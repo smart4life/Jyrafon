@@ -153,12 +153,13 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
                 <textarea name="filename" id="filename"></textarea>
                 <textarea name="expireDate" id="expireDate"></textarea>
                 <textarea name="link" id="link"></textarea>
+                <textarea name="password" id="password"></textarea>
             </div>
             <input name="transmitter" type="text" placeholder="<?php echo t('TRANSMITTER'); ?>" id="transmitter" required/>
             <input name="recipient" type="text" placeholder="<?php echo t('RECIPIENT'); ?>" id="recipient" required/>
             <input name="subject" id="subject" placeholder="<?php echo t('MAIL_SUBJECT'); ?>" required></input>
             <textarea name="message" id="message" placeholder="<?php echo t('MESSAGE'); ?>" rows="5" cols="33"></textarea>
-            <button id="button_send_mail" onclick="<?php jirafeau_send_mail($_POST['transmitter'], $_POST['recipient'], $_POST['message'], $_POST['link'], $_POST['subject'], $_POST['filename'], $_POST['expireDate'])?>" required>Send</button>
+            <button id="button_send_mail" onclick="<?php jirafeau_send_mail($_POST['transmitter'], $_POST['recipient'], $_POST['message'], $_POST['link'], $_POST['subject'], $_POST['filename'], $_POST['expireDate'], $_POST['password'])?>" required>Send</button>
         </form>
     </div>
 </div>
@@ -282,6 +283,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
         document.getElementById('upload').style.display = 'none';
         document.getElementById('uploading').style.display = '';
         upload (<?php echo jirafeau_get_max_upload_size_bytes(); ?>);
+        getPassword();
     "/>
     </p>
         </table>

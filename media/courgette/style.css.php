@@ -504,7 +504,7 @@ form input {
   display:none;
 }
 
-.AddClassCopy {
+.Copy {
   color:red;
   background-color:black;
 }
