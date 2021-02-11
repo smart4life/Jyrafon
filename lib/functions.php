@@ -1880,12 +1880,5 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
     $headers[] = "MIME-Version: 1.0";
     $headers[] = 'Content-Type: text/html; charset="utf-8"';
     $headers[] = 'Content-Tranfert-Encoding: 8bit';
-    if (mail($recipient, $email_subject, $message, implode("\r\n", $headers)) == true) {
-        return true;
-    } else if (mail($recipient, $email_subject, $message, implode("\r\n", $headers)) == false) {
-        echo" return false mail";
-        return false;
-    } else {
-        echo" fonction mail beug";
-    }
+    return mail($recipient, $email_subject, $message, implode("\r\n", $headers));
 }
