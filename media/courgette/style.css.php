@@ -490,8 +490,6 @@ textarea[readonly="readonly"] + p + p a:focus {
 }
 
 form input {
-  outline: 0;
-  border: 0;
   background: #f2f2f2;
   width: 100%;
   margin: 0 0 15px;
@@ -510,8 +508,6 @@ form input {
 }
 
 form textarea {
-  outline: 0;
-  border: 0;
   background: #f2f2f2;
   width: 100%;
   margin: 0 0 15px;

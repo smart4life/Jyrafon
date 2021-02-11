@@ -507,6 +507,7 @@ function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $cfg, $lin
                 break;
         }
     }
+
     /* file informations */
     $hash = jirafeau_hash_file($file_hash_method, $file['tmp_name']);
     $name = str_replace(NL, '', trim($file['name']));
@@ -1172,6 +1173,7 @@ function jirafeau_async_end($ref, $code, $cfg, $link_name_length, $file_hash_met
                 break;
         }
     }
+
     $hash = jirafeau_hash_file($file_hash_method, $p);
     $size = filesize($p);
     $np = s2p($hash);
@@ -1794,21 +1796,21 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
 {
     $message = '<html>
     <style>
-        h1 {
+        #h1 {
             color:#663d1c;
         }
-        body {
+        #body {
             justify-content:center;
             display: flex;
         }
-        strong {
+        #strong {
             color: #663d1c;
         }
         #expireFile {
             font-size: 14px;
             margin-top: 0px;
         }
-        h3 {
+        .h3 {
             margin: 0px;
         }
         .block {
@@ -1821,7 +1823,7 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
         #text {
             margin: 30px;
         }
-        button {
+        #button {
             text-transform: uppercase;
             outline: 2px;
             background: #663d1c;
@@ -1832,7 +1834,7 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
             cursor: pointer;
             border-radius: 20px;
         }
-        footer {
+        #footer {
             font-size: 12px;
             display: flex;
             flex-direction:column;
@@ -1849,24 +1851,24 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
     <head>
         <title>Jirafeau</title>
     </head>
-    <body style="justify-content: center; display: flex;">
+    <body id="body">
         <div id="mail">
-            <h1>Jirafeau</h1>
+            <h1 id="h1">Jirafeau</h1>
             <img src="https://framalibre.org/sites/default/files/leslogos/JirafeauLogo.jpeg">
             <div class="block">
                 <h2>
-                    <strong>' . $transmitter . '</strong> sent you a file
+                    <strong id="strong">' . $transmitter . '</strong> sent you a file
                 </h2>
                 <p id="expireFile">Expires on ' . $expireDate . '</p>
             </div>
             <div id="text">
                 <p>' . $message .'</p>
             </div>
-            <button style="text-transform:uppercase; outline:2px; background:#663d1c; width:35%; padding:15px; color:#FFFFFF; font-size:14px; cursor:pointer; border-radius:20px;" href=' . $link .'>Get your file</button>
+            <button id="button" href=' . $link .'>Get your file</button>
             <div class="block">
-                <h3>Dowload link:</h3>
+                <h3 class="h3">Dowload link:</h3>
                 <p>' . $link . '</p>
-                <h3>Files: ' . $filename .'</h3>
+                <h3 class="h3">Files: ' . $filename .'</h3>
                 <h4>Password:' . $password . '</h4>
             </div>
             <p id="footer">To make sure our emails arrive, please add noreply@send.smart4.io to your contacts.</p>
@@ -1881,8 +1883,11 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
     $headers[] = 'Content-Type: text/html; charset="utf-8"';
     $headers[] = 'Content-Tranfert-Encoding: 8bit';
     if (mail($recipient, $email_subject, $message, implode("\r\n", $headers)) == true) {
-        echo('Succes: Your email has been sent');
+        return true;
+    } else if (mail($recipient, $email_subject, $message, implode("\r\n", $headers)) == false) {
+        echo" return false mail";
+        return false;
     } else {
-        echo('Error: Your email was not sent');
+        echo" fonction mail beug";
     }
 }

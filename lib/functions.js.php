@@ -804,4 +804,63 @@ function getPassword() {
     let password = document.getElementById("input_key").value;
     document.getElementById('password').textContent = password;
 }
+
+function create_champ(i) {
+let i2 = i + 1;
+document.getElementById('champs_'+i).innerHTML = '<input type="text" name="recipient[] id="recipient['+i+']"></span>';
+document.getElementById('champs_'+i).innerHTML += (i <= 10) ? '<br /><span id="champs_'+i2+'"><a href="javascript:create_champ('+i2+')">+</a></span>' : '';
+}
+
+function getDataFormMail(e) {
+    e.preventDefault();
+
+    link = document.getElementById('link').value;
+    expireDate = document.getElementById('expireDate').value;
+    transmitter = document.getElementById('transmitter').value;
+    recipient = document.getElementById('recipient').value;
+    email_subject = document.getElementById('subject').value;
+    message = document.getElementById('message').value;
+    password = document.getElementById('password').value;
+    filename = document.getElementById('filename').value;
+    let req = new XMLHttpRequest();
+    req.addEventListener ("error", XHRErrorHandler, false);
+    req.addEventListener ("abort", XHRErrorHandler, false);
+    req.onreadystatechange = function (evt) {
+        if (req.readyState == 4 && req.status == 200)
+        {
+            let res = req.responseText;
+            if (/^Error/.test(res))
+            {
+                pop_failure (res);
+                return;
+            }
+
+        } else {
+            ("<?php echo t("ERR_OCC"); ?>");
+        }
+    }
+    req.open ("POST", 'script.php', true);
+    req.withCredentials = true;
+    let form = new FormData();
+    form.append ("FormMail", FormMail);
+    if (transmitter)
+        form.append ("transmitter", transmitter);
+    if (recipient)
+        form.append ("recipient", recipient);
+    if (message)
+        form.append ("message", message);
+    if (link)
+        form.append ("link", link);
+    if (email_subject)
+        form.append ("email_subject", email_subject);
+    if (filename)
+        form.append ("filename", filename);
+    if (expireDate)
+        form.append ("expireDate", expireDate);
+    if (password)
+        form.append ("password", password);
+
+    req.send (form);
+}
+
 // @license-end

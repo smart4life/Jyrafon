@@ -148,7 +148,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
 
     <!--- Form send mail -->
     <div id="ConteneurFormMail">
-        <form action="" method="post" id="form">
+        <form name="FormMail" action="" method="post" id="form">
             <div id="data">
                 <textarea name="filename" id="filename"></textarea>
                 <textarea name="expireDate" id="expireDate"></textarea>
@@ -157,9 +157,10 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
             </div>
             <input name="transmitter" type="text" placeholder="<?php echo t('TRANSMITTER'); ?>" id="transmitter" required/>
             <input name="recipient" type="text" placeholder="<?php echo t('RECIPIENT'); ?>" id="recipient" required/>
+            <span id="champs_1"><a href="javascript:create_champ(1)">+</a></span>
             <input name="subject" id="subject" placeholder="<?php echo t('MAIL_SUBJECT'); ?>" required></input>
             <textarea name="message" id="message" placeholder="<?php echo t('MESSAGE'); ?>" rows="5" cols="33"></textarea>
-            <button id="button_send_mail" onclick="<?php jirafeau_send_mail($_POST['transmitter'], $_POST['recipient'], $_POST['message'], $_POST['link'], $_POST['subject'], $_POST['filename'], $_POST['expireDate'], $_POST['password'])?>" required>Send</button>
+            <button id="button_send_mail" onclick="getDataFormMail(event)" required>Send</button>
         </form>
     </div>
 </div>
