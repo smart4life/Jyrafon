@@ -507,7 +507,6 @@ function jirafeau_upload($file, $one_time_download, $key, $time, $ip, $cfg, $lin
                 break;
         }
     }
-
     /* file informations */
     $hash = jirafeau_hash_file($file_hash_method, $file['tmp_name']);
     $name = str_replace(NL, '', trim($file['name']));
@@ -1173,7 +1172,6 @@ function jirafeau_async_end($ref, $code, $cfg, $link_name_length, $file_hash_met
                 break;
         }
     }
-
     $hash = jirafeau_hash_file($file_hash_method, $p);
     $size = filesize($p);
     $np = s2p($hash);

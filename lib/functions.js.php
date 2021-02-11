@@ -813,7 +813,6 @@ document.getElementById('champs_'+i).innerHTML += (i <= 10) ? '<br /><span id="c
 
 function getDataFormMail(e) {
     e.preventDefault();
-
     link = document.getElementById('link').value;
     expireDate = document.getElementById('expireDate').value;
     transmitter = document.getElementById('transmitter').value;
@@ -834,7 +833,6 @@ function getDataFormMail(e) {
                 pop_failure (res);
                 return;
             }
-
         } else {
             ("<?php echo t("ERR_OCC"); ?>");
         }
