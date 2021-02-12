@@ -1830,7 +1830,7 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
             border-radius: 20px;
         }
         #mail {
-            background-color:#f4f4f4;
+            background-color: #f4f4f4;
         }
     </style>
     <head>

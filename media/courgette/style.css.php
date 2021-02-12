@@ -511,17 +511,3 @@ form textarea {
   box-sizing: border-box;
   font-size: 14px;
 }
-
-#button_send_mail {
-  text-transform: uppercase;
-  outline: 2px;
-  background: #663d1c;
-  width: 100%;
-  border: 0;
-  padding: 15px;
-  color: #FFFFFF;
-  font-size: 14px;
-  -webkit-transition: all 0.3 ease;
-  transition: all 0.3 ease;
-  cursor: pointer;
-}
