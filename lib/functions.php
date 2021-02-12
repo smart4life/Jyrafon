@@ -1794,37 +1794,37 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
 {
     $message = '<html>
     <style>
-        #h1 {
-            color:#663d1c;
+        h1 {
+            color: #663d1c;
         }
-        #body {
-            justify-content:center;
+        body {
+            justify-content: center;
             display: flex;
         }
-        #strong {
+        strong {
             color: #663d1c;
         }
         #expireFile {
             font-size: 14px;
             margin-top: 0px;
         }
-        .h3 {
+        h3 {
             margin: 0px;
         }
         .block {
-            margin-top:20px;
-            margin-bottom:20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         #text {
             margin: 30px;
         }
-        #button {
+        button {
             text-transform: uppercase;
             outline: 2px;
             background: #663d1c;
             width: 35%;
             padding: 15px;
-            color: #FFFFFF;
+            color: #FFF;
             font-size: 14px;
             cursor: pointer;
             border-radius: 20px;
@@ -1834,26 +1834,25 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
         }
     </style>
     <head>
-        <title>Jirafeau</title>
+        <title>Jyrafon</title>
     </head>
-    <body id="body">
+    <body>
         <div id="mail">
-            <h1 id="h1">Jirafeau</h1>
-            <img src="https://framalibre.org/sites/default/files/leslogos/JirafeauLogo.jpeg">
+            <h1>Jyrafon</h1>
             <div class="block">
                 <h2>
-                    <strong id="strong">' . $transmitter . '</strong> sent you a file
+                    <strong>' . $transmitter . '</strong> sent you a file
                 </h2>
                 <p id="expireFile">Expires on ' . $expireDate . '</p>
             </div>
             <div id="text">
                 <p>' . $message .'</p>
             </div>
-            <button id="button" href=' . $link .'>Get your file</button>
+            <button href=' . $link .'>Get your file</button>
             <div class="block">
-                <h3 class="h3">Dowload link:</h3>
+                <h3>Dowload link:</h3>
                 <p>' . $link . '</p>
-                <h3 class="h3">Files: ' . $filename .'</h3>
+                <h3>Files: ' . $filename .'</h3>
                 <h4>Password:' . $password . '</h4>
             </div>
         </div>

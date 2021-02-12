@@ -763,9 +763,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 // Add copy event listeners
 function copyLinkToClipboard(link_id) {
-    var focus = document.activeElement;
-    var e = document.getElementById(link_id);
-    var tmp = document.createElement("textarea");
+    let focus = document.activeElement;
+    let e = document.getElementById(link_id);
+    let tmp = document.createElement("textarea");
     document.body.appendChild(tmp);
     tmp.textContent = e.href;
     tmp.focus();
@@ -777,23 +777,21 @@ function copyLinkToClipboard(link_id) {
 }
 
 function addCopyListener(button_id, link_id) {
-    if(document.getElementById(button_id)) {
-        document.getElementById(button_id).addEventListener("click", function() {
-            copyLinkToClipboard(link_id);
-            let element = document.getElementById(button_id);
-            if (element.classList) {
-                element.classList.toggle("Copy");
-            } else {
-                let classes = element.className.split(" ");
-                let i = classes.indexOf("Copy");
-                if (i >= 0)
-                    classes.splice(i, 1);
-                else
-                    classes.push("Copy");
-                    element.className = classes.join(" ");
-            }
-        })
-    }
+    let element = document.getElementById(button_id);
+    element.addEventListener("click", function() {
+        copyLinkToClipboard(link_id);
+        if (element.classList) {
+            element.classList.toggle("Copy");
+        } else {
+            let classes = element.className.split(" ");
+            let i = classes.indexOf("Copy");
+            if (i >= 0)
+                classes.splice(i, 1);
+            else
+                classes.push("Copy");
+                element.className = classes.join(" ");
+        }
+    })
 }
 
 function create_champ(i) {
@@ -842,6 +840,7 @@ function getDataFormMail(e) {
         }
     }
     req.open ("POST", 'script.php', true);
+    req.withCredentials = true;
     let form = new FormData();
     form.append ("FormMail", FormMail);
     if (transmitter)

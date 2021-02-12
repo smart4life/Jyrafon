@@ -106,7 +106,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
         <a id="upload_link_email" href=""><img id="upload_image_email"/></a>
     </p><p>
         <code id="upload_link_text"></code>
-        <button id="upload_link_button" onclick="addClass()">&#128203;</button>
+        <button id="upload_link_button">&#128203;</button>
     </p>
     </div>
 

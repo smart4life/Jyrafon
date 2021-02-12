@@ -475,8 +475,8 @@ textarea[readonly="readonly"] + p + p a:focus {
    ========================================================================== */
 
 #ConteneurFormMail {
-  display:flex;
-  justify-content:center;
+  display: flex;
+  justify-content: center;
 }
 
 #form {
