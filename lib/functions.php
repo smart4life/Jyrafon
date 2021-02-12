@@ -1812,9 +1812,6 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
             margin: 0px;
         }
         .block {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             margin-top:20px;
             margin-bottom:20px;
         }
@@ -1832,18 +1829,8 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
             cursor: pointer;
             border-radius: 20px;
         }
-        #footer {
-            font-size: 12px;
-            display: flex;
-            flex-direction:column;
-            align-items: center;
-        }
         #mail {
             background-color:#f4f4f4;
-            max-width: 60%;
-            display:flex;
-            flex-direction: column;
-            align-items:center;
         }
     </style>
     <head>
