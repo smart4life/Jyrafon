@@ -514,7 +514,7 @@ elseif (isset($_GET['end_async'])) {
     } elseif(jirafeau_send_mail($_POST['transmitter'], $_POST['recipient'], $_POST['message'], $_POST['link'], $_POST['email_subject'], $_POST['filename'], $_POST['expireDate'], $_POST['password']) == false) {
         echo 'The email could not be sent';
     } else {
-        echo 'Error 24';
+        echo 'Error 25';
     };
 }
 exit;
