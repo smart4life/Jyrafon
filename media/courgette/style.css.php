@@ -498,10 +498,6 @@ form input {
   font-size: 14px;
 }
 
-#data {
-  display:none;
-}
-
 .Copy {
   color:red;
   background-color:black;

@@ -105,7 +105,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
         <a id="upload_link" href=""><?php echo t('DL_PAGE') ?></a>
         <a id="upload_link_email" href=""><img id="upload_image_email"/></a>
     </p><p>
-        <code id=upload_link_text></code>
+        <code id="upload_link_text"></code>
         <button id="upload_link_button" onclick="addClass()">&#128203;</button>
     </p>
     </div>
@@ -116,7 +116,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <p>
         <a id="preview_link" href=""><?php echo t('VIEW_LINK') ?></a>
     </p><p>
-        <code id=preview_link_text></code>
+        <code id="preview_link_text"></code>
         <button id="preview_link_button">&#128203;</button>
     </p>
     </div>
@@ -127,7 +127,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <p>
         <a id="direct_link" href=""><?php echo t('DIRECT_DL') ?></a>
     </p><p>
-        <code id=direct_link_text></code>
+        <code id="direct_link_text"></code>
         <button id="direct_link_button">&#128203;</button>
     </p>
     </div>
@@ -136,7 +136,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <p>
         <a id="delete_link" href=""><?php echo t('DELETE_LINK') ?></a>
     </p><p>
-        <code id=delete_link_text></code>
+        <code id="delete_link_text"></code>
         <button id="delete_link_button">&#128203;</button>
     </p>
     </div>
@@ -149,15 +149,9 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <!--- Form send mail -->
     <div id="ConteneurFormMail">
         <form name="FormMail" action="" method="post" id="form">
-            <div id="data">
-                <textarea name="filename" id="filename"></textarea>
-                <textarea name="expireDate" id="expireDate"></textarea>
-                <textarea name="link" id="link"></textarea>
-                <textarea name="password" id="password"></textarea>
-            </div>
             <input name="transmitter" type="text" placeholder="<?php echo t('TRANSMITTER'); ?>" id="transmitter" required/>
             <input name="recipient" type="text" placeholder="<?php echo t('RECIPIENT'); ?>" required/>
-            <span id="champs_1"><a href="javascript:create_champ(1)">+</a></span>
+            <div id="champs_1"><a href="javascript:create_champ(1)">+</a></div>
             <input name="subject" id="subject" placeholder="<?php echo t('MAIL_SUBJECT'); ?>" required></input>
             <textarea name="message" id="message" placeholder="<?php echo t('MESSAGE'); ?>" rows="5" cols="33"></textarea>
             <button id="button_send_mail" onclick="getDataFormMail(event)" required>Send</button>
@@ -284,7 +278,6 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
         document.getElementById('upload').style.display = 'none';
         document.getElementById('uploading').style.display = '';
         upload (<?php echo jirafeau_get_max_upload_size_bytes(); ?>);
-        getPassword();
     "/>
     </p>
         </table>

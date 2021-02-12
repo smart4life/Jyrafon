@@ -1869,7 +1869,6 @@ function jirafeau_send_mail($transmitter, $recipient, $message, $link, $email_su
                 <h3 class="h3">Files: ' . $filename .'</h3>
                 <h4>Password:' . $password . '</h4>
             </div>
-            <p id="footer">To make sure our emails arrive, please add noreply@send.smart4.io to your contacts.</p>
         </div>
     </body>
     </html>';

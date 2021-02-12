@@ -152,9 +152,6 @@ function show_link (reference, delete_code, crypt_key, date)
         //Send download link by mailto
         b += "%0D" + "%0A" + encodeURIComponent("<?php echo t("VALID_UNTIL"); ?>: " + date.format('YYYY-MM-DD hh:mm (GMT O)')) + "%0D" + "%0A";
         document.getElementById('upload_link_email').href = "mailto:?body=" + b + "&subject=" + encodeURIComponent(filename);
-        //Send the link in the message field of the form
-        document.getElementById('link').textContent = web_root + download_link_href;
-        document.getElementById('filename').textContent = filename;
     }
 
     // Delete link
@@ -174,7 +171,6 @@ function show_link (reference, delete_code, crypt_key, date)
             + '</span>';
         document.getElementById('date').style.display = '';
     }
-    document.getElementById('expireDate').textContent = date.format('YYYY-MM-DD hh:mm (GMT O)');
 
     // Preview link (if allowed)
     if (!!document.getElementById('preview_link'))
@@ -800,32 +796,35 @@ function addCopyListener(button_id, link_id) {
     }
 }
 
-function getPassword() {
-    let password = document.getElementById("input_key").value;
-    document.getElementById('password').textContent = password;
+function create_champ(i) {
+    let i2 = i + 1;
+    document.getElementById('champs_'+i).innerHTML = '<input type="text" name="recipient" id="recipient'+i+'"><a id="remove'+i+'" href="javascript:removeChamps('+i+')" style="color:red">x</a>';
+    document.getElementById('champs_'+i).innerHTML += (i <= 10) ? '<br /><div id="champs_'+i2+'"><a href="javascript:create_champ('+i2+')">+</a></div>' : '';
 }
 
-function create_champ(i) {
-let i2 = i + 1;
-document.getElementById('champs_'+i).innerHTML = '<input type="text" name="recipient"></span>';
-document.getElementById('champs_'+i).innerHTML += (i <= 10) ? '<br /><span id="champs_'+i2+'"><a href="javascript:create_champ('+i2+')">+</a></span>' : '';
+function removeChamps(i) {
+    remove = document.getElementById("remove"+i);
+    input = document.getElementById("recipient"+i);
+    input.remove(input);
+    remove.remove(remove);
 }
 
 function getDataFormMail(e) {
     e.preventDefault();
     document.getElementById('ConteneurFormMail').style.visibility = 'hidden';
-    link = document.getElementById('link').value;
-    expireDate = document.getElementById('expireDate').value;
-    transmitter = document.getElementById('transmitter').value;
+    let link = document.getElementById('upload_link_text').textContent;
+    let expireDate = document.getElementById('date').textContent;
+    let transmitter = document.getElementById('transmitter').value;
     let recipient = [];
-    NbrRecipients = document.getElementsByName('recipient');
+    let NbrRecipients = document.getElementsByName('recipient');
     for (element of NbrRecipients) {
         recipient.push(element.value);
     }
-    email_subject = document.getElementById('subject').value;
-    message = document.getElementById('message').value;
-    password = document.getElementById('password').value;
-    filename = document.getElementById('filename').value;
+    let email_subject = document.getElementById('subject').value;
+    let message = document.getElementById('message').value;
+    let password = document.getElementById("input_key").value;
+    let filename = document.getElementById('file_select').value;
+    filename = filename.substring(12);
     let req = new XMLHttpRequest();
     req.addEventListener ("error", XHRErrorHandler, false);
     req.addEventListener ("abort", XHRErrorHandler, false);
@@ -843,7 +842,6 @@ function getDataFormMail(e) {
         }
     }
     req.open ("POST", 'script.php', true);
-    req.withCredentials = true;
     let form = new FormData();
     form.append ("FormMail", FormMail);
     if (transmitter)
