@@ -156,7 +156,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
                 <textarea name="password" id="password"></textarea>
             </div>
             <input name="transmitter" type="text" placeholder="<?php echo t('TRANSMITTER'); ?>" id="transmitter" required/>
-            <input name="recipient" type="text" placeholder="<?php echo t('RECIPIENT'); ?>" id="recipient" required/>
+            <input name="recipient" type="text" placeholder="<?php echo t('RECIPIENT'); ?>" required/>
             <span id="champs_1"><a href="javascript:create_champ(1)">+</a></span>
             <input name="subject" id="subject" placeholder="<?php echo t('MAIL_SUBJECT'); ?>" required></input>
             <textarea name="message" id="message" placeholder="<?php echo t('MESSAGE'); ?>" rows="5" cols="33"></textarea>

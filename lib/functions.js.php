@@ -807,7 +807,7 @@ function getPassword() {
 
 function create_champ(i) {
 let i2 = i + 1;
-document.getElementById('champs_'+i).innerHTML = '<input type="text" name="recipient[] id="recipient['+i+']"></span>';
+document.getElementById('champs_'+i).innerHTML = '<input type="text" name="recipient"></span>';
 document.getElementById('champs_'+i).innerHTML += (i <= 10) ? '<br /><span id="champs_'+i2+'"><a href="javascript:create_champ('+i2+')">+</a></span>' : '';
 }
 
@@ -817,7 +817,11 @@ function getDataFormMail(e) {
     link = document.getElementById('link').value;
     expireDate = document.getElementById('expireDate').value;
     transmitter = document.getElementById('transmitter').value;
-    recipient = document.getElementById('recipient').value;
+    let recipient = [];
+    NbrRecipients = document.getElementsByName('recipient');
+    for (element of NbrRecipients) {
+        recipient.push(element.value);
+    }
     email_subject = document.getElementById('subject').value;
     message = document.getElementById('message').value;
     password = document.getElementById('password').value;
