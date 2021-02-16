@@ -781,13 +781,14 @@ function addCopyListener(button_id, link_id) {
     element.addEventListener("click", function() {
         copyLinkToClipboard(link_id);
         if (element.classList) {
-            element.classList.toggle("Copy");
-        } else {
+            let Liste = document.querySelectorAll("button");
+            Liste.forEach(function(button) {
+                button.classList.remove("Copy");
+            });
             let classes = element.className.split(" ");
             let i = classes.indexOf("Copy");
             if (i >= 0)
                 classes.splice(i, 1);
-            else
                 classes.push("Copy");
                 element.className = classes.join(" ");
         }

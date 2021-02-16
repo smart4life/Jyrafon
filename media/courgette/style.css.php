@@ -499,8 +499,7 @@ form input {
 }
 
 .Copy {
-  color:red;
-  background-color:black;
+  background-color:#663D1C;
 }
 
 form textarea {
