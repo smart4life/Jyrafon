@@ -772,7 +772,6 @@ function copyLinkToClipboard(link_id) {
     tmp.setSelectionRange(0, tmp.value.length);
     document.execCommand("copy");
     document.body.removeChild(tmp);
-
     focus.focus();
 }
 
@@ -806,6 +805,13 @@ function removeChamps(i) {
     input = document.getElementById("recipient"+i);
     input.remove(input);
     remove.remove(remove);
+}
+
+function alertCopy() {
+    document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERTCOPY'); ?></strong>";
+    setTimeout(function() {
+        document.getElementById('alertDiv').innerHTML = "";
+    },4000);
 }
 
 function getDataFormMail(e) {
@@ -862,5 +868,9 @@ function getDataFormMail(e) {
         form.append ("password", password);
 
     req.send (form);
+    document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERTSUBMIT'); ?></strong>";
+    setTimeout(function() {
+        document.getElementById('alertDiv').innerHTML = "";
+    },4000);
 }
 // @license-end

@@ -1,4 +1,6 @@
 {
+    "ALERTSUBMIT": "",
+    "ALERTCOPY": "",
     "TRANSMITTER":"Vysílač",
     "RECIPIENT":"Příjemce",
     "MAIL_SUBJECT":"",

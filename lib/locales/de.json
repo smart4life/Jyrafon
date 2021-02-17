@@ -1,4 +1,6 @@
 {
+    "ALERTSUBMIT": "",
+    "ALERTCOPY": "",
     "TRANSMITTER":"Empfänger",
     "RECIPIENT":"",
     "MAIL_SUBJECT":"",

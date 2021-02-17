@@ -498,6 +498,23 @@ form input {
   font-size: 14px;
 }
 
+strong {
+  background-color: #f2dede;
+  border: 1px solid rgba(#34495e, 0.25);
+  color: #b94b45;
+  border-radius: 3px;
+  line-height: 30px;
+  position: absolute;
+  top: 0; left: 0;
+  display: block;
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  color: rgba(255, 255, 255, .9);
+  box-shadow: 0px 10px 50px rgba(0,0,0,.6);
+  background: #34495e;
+}
+
 .Copy {
   background-color:#663D1C;
 }

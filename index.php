@@ -98,6 +98,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
 
 ?>
 <div id="upload_finished">
+<div id="alertDiv"></div>
     <p><?php echo t('FILE_UP') ?></p>
 
     <div id="upload_finished_download_page">
@@ -106,7 +107,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
         <a id="upload_link_email" href=""><img id="upload_image_email"/></a>
     </p><p>
         <code id="upload_link_text"></code>
-        <button id="upload_link_button">&#128203;</button>
+        <button onclick="alertCopy()" id="upload_link_button">&#128203;</button>
     </p>
     </div>
 
@@ -117,7 +118,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
         <a id="preview_link" href=""><?php echo t('VIEW_LINK') ?></a>
     </p><p>
         <code id="preview_link_text"></code>
-        <button id="preview_link_button">&#128203;</button>
+        <button onclick="alertCopy()" id="preview_link_button">&#128203;</button>
     </p>
     </div>
     <?php
@@ -128,7 +129,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
         <a id="direct_link" href=""><?php echo t('DIRECT_DL') ?></a>
     </p><p>
         <code id="direct_link_text"></code>
-        <button id="direct_link_button">&#128203;</button>
+        <button onclick="alertCopy()" id="direct_link_button">&#128203;</button>
     </p>
     </div>
 
@@ -137,7 +138,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
         <a id="delete_link" href=""><?php echo t('DELETE_LINK') ?></a>
     </p><p>
         <code id="delete_link_text"></code>
-        <button id="delete_link_button">&#128203;</button>
+        <button onclick="alertCopy()" id="delete_link_button">&#128203;</button>
     </p>
     </div>
 
