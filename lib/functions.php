@@ -1794,12 +1794,19 @@ function jirafeau_send_mail($transmitter, $recipient, $recipients, $message, $li
 {
     $transmitter = filter_var($transmitter, FILTER_SANITIZE_EMAIL);
     $recipient = filter_var($recipient, FILTER_SANITIZE_EMAIL);
-    $recipients = filter_var($recipients, FILTER_SANITIZE_EMAIL);
     $link = filter_var($link, FILTER_SANITIZE_URL);
     $message = filter_var($message, FILTER_SANITIZE_STRING);
     $email_subject = filter_var($email_subject, FILTER_SANITIZE_STRING);
     $filename = filter_var($filename, FILTER_SANITIZE_STRING);
-    if (filter_var($recipient, FILTER_VALIDATE_EMAIL) && filter_var( $transmitter, FILTER_VALIDATE_EMAIL) && is_string($recipients)) {
+    $recipients = explode(",", $recipients);
+    $arrayRecipients = [];
+    foreach ($recipients as $element) {
+        $element = filter_var($element, FILTER_SANITIZE_EMAIL);
+        $element = filter_var($element, FILTER_VALIDATE_EMAIL);
+        array_push($arrayRecipients, $element);
+    }
+    $arrayRecipients = implode(",", $arrayRecipients);
+    if (filter_var($recipient, FILTER_VALIDATE_EMAIL) && filter_var( $transmitter, FILTER_VALIDATE_EMAIL)) {
         $message = '<html>
     <style>
         h1 {
@@ -1873,7 +1880,7 @@ function jirafeau_send_mail($transmitter, $recipient, $recipients, $message, $li
     $headers[] = "MIME-Version: 1.0";
     $headers[] = 'Content-Type: text/html; charset="utf-8"';
     $headers[] = 'Content-Tranfert-Encoding: 8bit';
-    $headers[] = 'Bcc:'. $recipients;
+    $headers[] = 'Bcc:'. $arrayRecipients;
     return mail($recipient, $email_subject, $message, implode("\r\n", $headers));
     } else {
          echo 'the email could not be sent because the information is incorrect';
