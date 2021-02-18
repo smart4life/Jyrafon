@@ -1803,91 +1803,101 @@ function jirafeau_send_mail($transmitter, $recipient, $recipients, $message, $li
     foreach ($recipients as $element) {
         $element = filter_var($element, FILTER_SANITIZE_EMAIL);
         $element = filter_var($element, FILTER_VALIDATE_EMAIL);
+        if ($element == false && !empty($element)) {
+            echo "the recipients are incorrect";
+            break;
+        } else if (empty($element)) {
+            echo "other recipients are empty";
+        }
         array_push($arrayRecipients, $element);
-        echo $element;
     }
     $arrayRecipients = implode(",", $arrayRecipients);
-    if (filter_var($recipient, FILTER_VALIDATE_EMAIL) && filter_var( $transmitter, FILTER_VALIDATE_EMAIL)) {
-        $message = '<html>
-    <style>
-        h1 {
-            color: #663d1c;
+    if(($transmitter && $recipient && $link && $message && $email_subject && $filename) == true) {
+        echo 'Valid';
+        if (filter_var($recipient, FILTER_VALIDATE_EMAIL) && filter_var($transmitter, FILTER_VALIDATE_EMAIL)) {
+                $message = '<html>
+                <style>
+                h1 {
+                    color: #663d1c;
+                }
+                body {
+                    justify-content: center;
+                    display: flex;
+                }
+                strong {
+                    color: #663d1c;
+                }
+                #expireFile {
+                    font-size: 14px;
+                    margin-top: 0px;
+                }
+                h3 {
+                    margin: 0px;
+                }
+                .block {
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                }
+                #text {
+                    margin: 30px;
+                }
+                button {
+                    text-transform: uppercase;
+                    outline: 2px;
+                    background: #663d1c;
+                    width: 35%;
+                    padding: 15px;
+                    color: #FFF;
+                    font-size: 14px;
+                    cursor: pointer;
+                    border-radius: 20px;
+                }
+                #mail {
+                    background-color: #f4f4f4;
+                }
+            </style>
+            <head>
+                <title>Jyrafon</title>
+            </head>
+            <body>
+                <div id="mail">
+                    <h1>Jyrafon</h1>
+                    <div class="block">
+                        <h2>
+                            <strong>' . $transmitter . '</strong> sent you a file
+                        </h2>
+                        <p id="expireFile">Expires on ' . $expireDate . '</p>
+                    </div>
+                    <div id="text">
+                        <p>' . $message .'</p>
+                    </div>
+                    <button href=' . $link .'>Get your file</button>
+                    <div class="block">
+                        <h3>Dowload link:</h3>
+                        <p>' . $link . '</p>
+                        <h3>Files: ' . $filename .'</h3>
+                        <h4>Password:' . $password . '</h4>
+                    </div>
+                </div>
+            </body>
+            </html>';
+            if($arrayRecipients == "") {
+                echo "other recipients are empty";
+            } else {
+                $headers[] = 'Bcc:'. $arrayRecipients;
+            }
+            $headers[] = 'From: '.$transmitter;
+            $headers[] = "Reply-to:" . $cfg['noreplyTransmitter'];
+            $headers[] = 'To: '.$recipient;
+            $headers[] = "Importance: Normal";
+            $headers[] = "MIME-Version: 1.0";
+            $headers[] = 'Content-Type: text/html; charset="utf-8"';
+            $headers[] = 'Content-Tranfert-Encoding: 8bit';
+            return mail($recipient, $email_subject, $message, implode("\r\n", $headers));
+        } else {
+         echo 'the email could not be sent because the transmitter or recipients are not valid';
         }
-        body {
-            justify-content: center;
-            display: flex;
-        }
-        strong {
-            color: #663d1c;
-        }
-        #expireFile {
-            font-size: 14px;
-            margin-top: 0px;
-        }
-        h3 {
-            margin: 0px;
-        }
-        .block {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        #text {
-            margin: 30px;
-        }
-        button {
-            text-transform: uppercase;
-            outline: 2px;
-            background: #663d1c;
-            width: 35%;
-            padding: 15px;
-            color: #FFF;
-            font-size: 14px;
-            cursor: pointer;
-            border-radius: 20px;
-        }
-        #mail {
-            background-color: #f4f4f4;
-        }
-    </style>
-    <head>
-        <title>Jyrafon</title>
-    </head>
-    <body>
-        <div id="mail">
-            <h1>Jyrafon</h1>
-            <div class="block">
-                <h2>
-                    <strong>' . $transmitter . '</strong> sent you a file
-                </h2>
-                <p id="expireFile">Expires on ' . $expireDate . '</p>
-            </div>
-            <div id="text">
-                <p>' . $message .'</p>
-            </div>
-            <button href=' . $link .'>Get your file</button>
-            <div class="block">
-                <h3>Dowload link:</h3>
-                <p>' . $link . '</p>
-                <h3>Files: ' . $filename .'</h3>
-                <h4>Password:' . $password . '</h4>
-            </div>
-        </div>
-    </body>
-    </html>';
-    if($arrayRecipients == "") {
-        echo "vide";
     } else {
-        $headers[] = 'Bcc:'. $arrayRecipients;
+    echo 'the email could not be sent because the information is incorrect';
     }
-    $headers[] = 'From: '.$transmitter;
-    $headers[] = "Reply-to:" . $cfg['noreplyTransmitter'];
-    $headers[] = 'To: '.$recipient;
-    $headers[] = "Importance: Normal";
-    $headers[] = "MIME-Version: 1.0";
-    $headers[] = 'Content-Type: text/html; charset="utf-8"';
-    $headers[] = 'Content-Tranfert-Encoding: 8bit';
-    return mail($recipient, $email_subject, $message, implode("\r\n", $headers));
-    } else {
-         echo 'the email could not be sent because the information is incorrect';
-     }
 }
