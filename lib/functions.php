@@ -1804,6 +1804,7 @@ function jirafeau_send_mail($transmitter, $recipient, $recipients, $message, $li
         $element = filter_var($element, FILTER_SANITIZE_EMAIL);
         $element = filter_var($element, FILTER_VALIDATE_EMAIL);
         array_push($arrayRecipients, $element);
+        echo $element;
     }
     $arrayRecipients = implode(",", $arrayRecipients);
     if (filter_var($recipient, FILTER_VALIDATE_EMAIL) && filter_var( $transmitter, FILTER_VALIDATE_EMAIL)) {
@@ -1873,6 +1874,11 @@ function jirafeau_send_mail($transmitter, $recipient, $recipients, $message, $li
         </div>
     </body>
     </html>';
+    if($arrayRecipients == "") {
+        echo "vide";
+    } else {
+        $headers[] = 'Bcc:'. $arrayRecipients;
+    }
     $headers[] = 'From: '.$transmitter;
     $headers[] = "Reply-to:" . $cfg['noreplyTransmitter'];
     $headers[] = 'To: '.$recipient;
@@ -1880,7 +1886,6 @@ function jirafeau_send_mail($transmitter, $recipient, $recipients, $message, $li
     $headers[] = "MIME-Version: 1.0";
     $headers[] = 'Content-Type: text/html; charset="utf-8"';
     $headers[] = 'Content-Tranfert-Encoding: 8bit';
-    $headers[] = 'Bcc:'. $arrayRecipients;
     return mail($recipient, $email_subject, $message, implode("\r\n", $headers));
     } else {
          echo 'the email could not be sent because the information is incorrect';
