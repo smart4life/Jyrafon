@@ -779,6 +779,10 @@ function addCopyListener(button_id, link_id) {
     let element = document.getElementById(button_id);
     element.addEventListener("click", function() {
         copyLinkToClipboard(link_id);
+        document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERT_COPIED'); ?></strong>";
+        setTimeout(function() {
+            document.getElementById('alertDiv').innerHTML = "";
+        },4000);
         if (element.classList) {
             let Liste = document.querySelectorAll("button");
             Liste.forEach(function(button) {
@@ -796,7 +800,7 @@ function addCopyListener(button_id, link_id) {
 
 function create_champ(i) {
     let i2 = i + 1;
-    document.getElementById('champs_'+i).innerHTML = '<input type="text" name="recipient" id="recipient'+i+'"><a id="remove'+i+'" href="javascript:removeChamps('+i+')" style="color:red">x</a>';
+    document.getElementById('champs_'+i).innerHTML = '<input type="text" name="recipients" id="recipient'+i+'"><a id="remove'+i+'" href="javascript:removeChamps('+i+')" style="color:red">x</a>';
     document.getElementById('champs_'+i).innerHTML += (i <= 10) ? '<br /><div id="champs_'+i2+'"><a href="javascript:create_champ('+i2+')">+</a></div>' : '';
 }
 
@@ -807,23 +811,17 @@ function removeChamps(i) {
     remove.remove(remove);
 }
 
-function alertCopy() {
-    document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERTCOPY'); ?></strong>";
-    setTimeout(function() {
-        document.getElementById('alertDiv').innerHTML = "";
-    },4000);
-}
-
 function getDataFormMail(e) {
     e.preventDefault();
     document.getElementById('ConteneurFormMail').style.visibility = 'hidden';
     let link = document.getElementById('upload_link_text').textContent;
     let expireDate = document.getElementById('date').textContent;
     let transmitter = document.getElementById('transmitter').value;
-    let recipient = [];
-    let NbrRecipients = document.getElementsByName('recipient');
+    let recipient = document.getElementById('recipient').value;
+    let recipients = [];
+    let NbrRecipients = document.getElementsByName('recipients');
     for (element of NbrRecipients) {
-        recipient.push(element.value);
+        recipients.push(element.value);
     }
     let email_subject = document.getElementById('subject').value;
     let message = document.getElementById('message').value;
@@ -854,6 +852,8 @@ function getDataFormMail(e) {
         form.append ("transmitter", transmitter);
     if (recipient)
         form.append ("recipient", recipient);
+    if (recipients)
+        form.append ("recipients", recipients);
     if (message)
         form.append ("message", message);
     if (link)
@@ -868,7 +868,7 @@ function getDataFormMail(e) {
         form.append ("password", password);
 
     req.send (form);
-    document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERTSUBMIT'); ?></strong>";
+    document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERT_SUBMIT'); ?></strong>";
     setTimeout(function() {
         document.getElementById('alertDiv').innerHTML = "";
     },4000);

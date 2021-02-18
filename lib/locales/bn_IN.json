@@ -1,6 +1,6 @@
 {
-    "ALERTSUBMIT": "",
-    "ALERTCOPY": "",
+    "ALERT_SUBMIT": "",
+    "ALERT_COPIED": "",
     "TRANSMITTER":"ট্রান্সমিটার",
     "RECIPIENT":"প্রাপক",
     "MAIL_SUBJECT":"ইমেইল বিষয়",

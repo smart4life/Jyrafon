@@ -1,6 +1,6 @@
 {
-    "ALERTSUBMIT": "",
-    "ALERTCOPY": "",
+    "ALERT_SUBMIT": "",
+    "ALERT_COPIED": "",
     "TRANSMITTER":"modtager",
     "RECIPIENT":"",
     "MAIL_SUBJECT":"",

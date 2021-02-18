@@ -1,6 +1,6 @@
 {
-    "ALERTSUBMIT": "",
-    "ALERTCOPY": "",
+    "ALERT_SUBMIT": "",
+    "ALERT_COPIED": "",
     "HISTORY": "Исторический",
     "TRANSMITTER":"получатель",
     "RECIPIENT":"получатель",

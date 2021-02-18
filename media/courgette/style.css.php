@@ -505,7 +505,7 @@ strong {
   border-radius: 3px;
   line-height: 30px;
   position: absolute;
-  top: 0; 
+  top: 0;
   left: 0;
   display: block;
   width: 100%;

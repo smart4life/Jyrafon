@@ -1,6 +1,6 @@
 {
-    "ALERTSUBMIT": "Envoyé",
-    "ALERTCOPY": "Copié",
+    "ALERT_SUBMIT": "Envoyé",
+    "ALERT_COPIED": "Copié",
     "TRANSMITTER":"Émetteur",
     "RECIPIENT":"Destinataire",
     "MAIL_SUBJECT":"Objet du mail",
