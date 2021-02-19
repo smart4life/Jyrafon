@@ -509,7 +509,7 @@ elseif (isset($_GET['end_async'])) {
         echo jirafeau_async_end($_POST['ref'], $_POST['code'], $cfg, $cfg['link_name_length'], $cfg['file_hash']);
     }
 } else {
-    $mail = jirafeau_send_mail($_POST['transmitter'], $_POST['recipient'], $_POST['recipients'], $_POST['message'], $_POST['link'], $_POST['email_subject'], $_POST['filename'], $_POST['expireDate'], $_POST['password'], $cfg);
+    $mail = jirafeau_send_mail($_POST['transmitter'], $_POST['recipients'], $_POST['message'], $_POST['link'], $_POST['email_subject'], $_POST['filename'], $_POST['expireDate'], $_POST['password'], $cfg);
     if ($mail == true) {
         echo 'Mail send';
     } elseif($mail == false) {

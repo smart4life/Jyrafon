@@ -817,7 +817,6 @@ function getDataFormMail(e) {
     let link = document.getElementById('upload_link_text').textContent;
     let expireDate = document.getElementById('date').textContent;
     let transmitter = document.getElementById('transmitter').value;
-    let recipient = document.getElementById('recipient').value;
     let recipients = [];
     let NbrRecipients = document.getElementsByName('recipients');
     for (element of NbrRecipients) {
@@ -850,10 +849,10 @@ function getDataFormMail(e) {
     form.append ("FormMail", FormMail);
     if (transmitter)
         form.append ("transmitter", transmitter);
-    if (recipient)
-        form.append ("recipient", recipient);
+        console.log(transmitter);
     if (recipients)
         form.append ("recipients", recipients);
+        console.log(recipients);
     if (message)
         form.append ("message", message);
     if (link)
@@ -867,10 +866,17 @@ function getDataFormMail(e) {
     if (password)
         form.append ("password", password);
 
+    if (transmitter == "" || recipients == "") {
+        document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERT_NOSUBMIT'); ?></strong>";
+        setTimeout(function() {
+            document.getElementById('alertDiv').innerHTML = "";
+        },4000);
+    } else {
+        document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERT_SUBMIT'); ?></strong>";
+        setTimeout(function() {
+            document.getElementById('alertDiv').innerHTML = "";
+        },4000);
+    }
     req.send (form);
-    document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERT_SUBMIT'); ?></strong>";
-    setTimeout(function() {
-        document.getElementById('alertDiv').innerHTML = "";
-    },4000);
 }
 // @license-end

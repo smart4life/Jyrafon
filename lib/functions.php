@@ -1790,10 +1790,9 @@ function jirafeau_add_ending_slash($path)
  * @param $message is the message of the email
  * @return true if the mail send.
  */
-function jirafeau_send_mail($transmitter, $recipient, $recipients, $message, $link, $email_subject, $filename, $expireDate, $password, $cfg)
+function jirafeau_send_mail($transmitter, $recipients, $message, $link, $email_subject, $filename, $expireDate, $password, $cfg)
 {
     $transmitter = filter_var($transmitter, FILTER_SANITIZE_EMAIL);
-    $recipient = filter_var($recipient, FILTER_SANITIZE_EMAIL);
     $link = filter_var($link, FILTER_SANITIZE_URL);
     $message = filter_var($message, FILTER_SANITIZE_STRING);
     $email_subject = filter_var($email_subject, FILTER_SANITIZE_STRING);
@@ -1812,9 +1811,9 @@ function jirafeau_send_mail($transmitter, $recipient, $recipients, $message, $li
         array_push($arrayRecipients, $element);
     }
     $arrayRecipients = implode(",", $arrayRecipients);
-    if(($transmitter && $recipient && $link && $message && $email_subject && $filename) == true) {
+    if(($transmitter && $link && $message && $email_subject && $filename) == true) {
         echo 'Valid';
-        if (filter_var($recipient, FILTER_VALIDATE_EMAIL) && filter_var($transmitter, FILTER_VALIDATE_EMAIL)) {
+        if (filter_var($transmitter, FILTER_VALIDATE_EMAIL)) {
                 $message = '<html>
                 <style>
                 h1 {
@@ -1892,7 +1891,7 @@ function jirafeau_send_mail($transmitter, $recipient, $recipients, $message, $li
             $headers[] = "MIME-Version: 1.0";
             $headers[] = 'Content-Type: text/html; charset="utf-8"';
             $headers[] = 'Content-Tranfert-Encoding: 8bit';
-            return mail($recipient, $email_subject, $message, implode("\r\n", $headers));
+            return mail(null, $email_subject, $message, implode("\r\n", $headers));
         } else {
          echo 'the email could not be sent because the transmitter or recipients are not valid';
         }
