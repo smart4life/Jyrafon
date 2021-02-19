@@ -1888,7 +1888,6 @@ function jirafeau_send_mail($transmitter, $recipient, $recipients, $message, $li
             }
             $headers[] = 'From: '.$transmitter;
             $headers[] = "Reply-to:" . $cfg['noreplyTransmitter'];
-            $headers[] = 'To: '.$recipient;
             $headers[] = "Importance: Normal";
             $headers[] = "MIME-Version: 1.0";
             $headers[] = 'Content-Type: text/html; charset="utf-8"';
