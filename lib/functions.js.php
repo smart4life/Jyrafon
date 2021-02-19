@@ -788,12 +788,7 @@ function addCopyListener(button_id, link_id) {
             Liste.forEach(function(button) {
                 button.classList.remove("Copy");
             });
-            let classes = element.className.split(" ");
-            let i = classes.indexOf("Copy");
-            if (i >= 0)
-                classes.splice(i, 1);
-                classes.push("Copy");
-                element.className = classes.join(" ");
+            element.classList.add("Copy");
         }
     })
 }
@@ -849,10 +844,8 @@ function getDataFormMail(e) {
     form.append ("FormMail", FormMail);
     if (transmitter)
         form.append ("transmitter", transmitter);
-        console.log(transmitter);
     if (recipients)
         form.append ("recipients", recipients);
-        console.log(recipients);
     if (message)
         form.append ("message", message);
     if (link)
