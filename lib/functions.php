@@ -1880,13 +1880,17 @@ function jirafeau_send_mail($transmitter, $recipients, $message, $link, $email_s
                 </div>
             </body>
             </html>';
-            if($arrayRecipients == "") {
+            if ($arrayRecipients == "") {
                 echo "other recipients are empty";
             } else {
                 $headers[] = 'Bcc:'. $arrayRecipients;
             }
-            $headers[] = 'From: '.$transmitter;
-            $headers[] = "Reply-to:" . $cfg['noreplyTransmitter'];
+            if ($cfg['noreplyTransmitter'] = "") {
+                $headers[] = 'From:' . $transmitter;
+            } else {
+                $headers[] = 'From:' . $cfg['noreplyTransmitter'];
+            }
+            $headers[] = "Reply-to:" . $transmitter;
             $headers[] = "Importance: Normal";
             $headers[] = "MIME-Version: 1.0";
             $headers[] = 'Content-Type: text/html; charset="utf-8"';
