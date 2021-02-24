@@ -1803,16 +1803,15 @@ function jirafeau_send_mail($transmitter, $recipients, $message, $link, $email_s
         $element = filter_var($element, FILTER_SANITIZE_EMAIL);
         $element = filter_var($element, FILTER_VALIDATE_EMAIL);
         if ($element == false && !empty($element)) {
-            echo "the recipients are incorrect";
+            echo t('INCORRECT_RECIPIENTS');
             break;
         } else if (empty($element)) {
-            echo "other recipients are empty";
+            echo t('EMPTY_RECIPIENTS');
         }
         array_push($arrayRecipients, $element);
     }
     $arrayRecipients = implode(",", $arrayRecipients);
-    if(($transmitter && $link && $message && $email_subject && $filename) == true) {
-        echo 'Valid';
+    if (($transmitter && $link && $message && $email_subject && $filename) == true) {
         if (filter_var($transmitter, FILTER_VALIDATE_EMAIL)) {
                 $message = '<html>
                 <style>
@@ -1881,25 +1880,25 @@ function jirafeau_send_mail($transmitter, $recipients, $message, $link, $email_s
             </body>
             </html>';
             if ($arrayRecipients == "") {
-                echo "other recipients are empty";
+                echo t('EMPTY_RECIPIENTS');
             } else {
                 $headers[] = 'Bcc:'. $arrayRecipients;
+                if ($cfg['noreplyTransmitter'] = "") {
+                    $headers[] = 'From:' . $transmitter;
+                } else {
+                    $headers[] = 'From:' . $cfg['noreplyTransmitter'];
+                }
+                $headers[] = "Reply-to:" . $transmitter;
+                $headers[] = "Importance: Normal";
+                $headers[] = "MIME-Version: 1.0";
+                $headers[] = 'Content-Type: text/html; charset="utf-8"';
+                $headers[] = 'Content-Tranfert-Encoding: 8bit';
+                return mail(null, $email_subject, $message, implode("\r\n", $headers));
             }
-            if ($cfg['noreplyTransmitter'] = "") {
-                $headers[] = 'From:' . $transmitter;
-            } else {
-                $headers[] = 'From:' . $cfg['noreplyTransmitter'];
-            }
-            $headers[] = "Reply-to:" . $transmitter;
-            $headers[] = "Importance: Normal";
-            $headers[] = "MIME-Version: 1.0";
-            $headers[] = 'Content-Type: text/html; charset="utf-8"';
-            $headers[] = 'Content-Tranfert-Encoding: 8bit';
-            return mail(null, $email_subject, $message, implode("\r\n", $headers));
         } else {
-         echo 'the email could not be sent because the transmitter or recipients are not valid';
+            echo t('VALID_INPUTS');
         }
     } else {
-    echo 'the email could not be sent because the information is incorrect';
+        echo t('INCORRECT_INFO');
     }
 }

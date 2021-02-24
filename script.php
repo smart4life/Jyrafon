@@ -511,9 +511,9 @@ elseif (isset($_GET['end_async'])) {
 } else {
     $mail = jirafeau_send_mail($_POST['transmitter'], $_POST['recipients'], $_POST['message'], $_POST['link'], $_POST['email_subject'], $_POST['filename'], $_POST['expireDate'], $_POST['password'], $cfg);
     if ($mail == true) {
-        echo 'Mail send';
+        echo t('MAIL_SEND');
     } elseif($mail == false) {
-        echo 'The email could not be sent';
+        echo t('MAIL_NOTSEND');
     } else {
         echo 'Error 25';
     };

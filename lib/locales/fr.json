@@ -1,4 +1,10 @@
 {
+    "INCORRECT_RECIPIENTS": "Les destinataires sont incorrects",
+    "MAIL_NOTSEND": "Le mail n'a pas été envoyé",
+    "MAIL_SEND": "Le mail à été envoyé",
+    "INCORRECT_INFO": "Les informations sont incorrecte",
+    "VALID_INPUTS": "Les champs ne sont pas valide",
+    "EMPTY_RECIPIENTS": "Le ou les destinataires sont vide",
     "ALERT_NOSUBMIT": "Le mail n'a pas pu être envoyé",
     "ALERT_SUBMIT": "Envoyé",
     "ALERT_COPIED": "Copié",
