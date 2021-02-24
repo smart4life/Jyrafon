@@ -1781,3 +1781,124 @@ function jirafeau_add_ending_slash($path)
 {
     return $path . ((substr($path, -1) == '/') ? '' : '/');
 }
+
+/**
+ * Function allowing the sending of mail from a form
+ * see more : https://www.php.net/manual/fr/function.mail.php
+ * @param $transmitter: the transmitter of the email
+ * @param $recipient: the recipient of the email
+ * @param $message is the message of the email
+ * @return true if the mail send.
+ */
+function jirafeau_send_mail($transmitter, $recipients, $message, $link, $email_subject, $filename, $expireDate, $password, $cfg)
+{
+    $transmitter = filter_var($transmitter, FILTER_SANITIZE_EMAIL);
+    $link = filter_var($link, FILTER_SANITIZE_URL);
+    $message = filter_var($message, FILTER_SANITIZE_STRING);
+    $email_subject = filter_var($email_subject, FILTER_SANITIZE_STRING);
+    $filename = filter_var($filename, FILTER_SANITIZE_STRING);
+    $recipients = explode(",", $recipients);
+    $arrayRecipients = [];
+    foreach ($recipients as $element) {
+        $element = filter_var($element, FILTER_SANITIZE_EMAIL);
+        $element = filter_var($element, FILTER_VALIDATE_EMAIL);
+        if ($element == false && !empty($element)) {
+            echo t('INCORRECT_RECIPIENTS');
+            break;
+        } else if (empty($element)) {
+            echo t('EMPTY_RECIPIENTS');
+        }
+        array_push($arrayRecipients, $element);
+    }
+    $arrayRecipients = implode(",", $arrayRecipients);
+    if (($transmitter && $link && $message && $email_subject && $filename) == true) {
+        if (filter_var($transmitter, FILTER_VALIDATE_EMAIL)) {
+                $message = '<html>
+                <style>
+                h1 {
+                    color: #663d1c;
+                }
+                body {
+                    justify-content: center;
+                    display: flex;
+                }
+                strong {
+                    color: #663d1c;
+                }
+                #expireFile {
+                    font-size: 14px;
+                    margin-top: 0px;
+                }
+                h3 {
+                    margin: 0px;
+                }
+                .block {
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                }
+                #text {
+                    margin: 30px;
+                }
+                button {
+                    text-transform: uppercase;
+                    outline: 2px;
+                    background: #663d1c;
+                    width: 35%;
+                    padding: 15px;
+                    color: #FFF;
+                    font-size: 14px;
+                    cursor: pointer;
+                    border-radius: 20px;
+                }
+                #mail {
+                    background-color: #f4f4f4;
+                }
+            </style>
+            <head>
+                <title>Jyrafon</title>
+            </head>
+            <body>
+                <div id="mail">
+                    <h1>Jyrafon</h1>
+                    <div class="block">
+                        <h2>
+                            <strong>' . $transmitter . '</strong> sent you a file
+                        </h2>
+                        <p id="expireFile">Expires on ' . $expireDate . '</p>
+                    </div>
+                    <div id="text">
+                        <p>' . $message .'</p>
+                    </div>
+                    <button href=' . $link .'>Get your file</button>
+                    <div class="block">
+                        <h3>Dowload link:</h3>
+                        <p>' . $link . '</p>
+                        <h3>Files: ' . $filename .'</h3>
+                        <h4>Password:' . $password . '</h4>
+                    </div>
+                </div>
+            </body>
+            </html>';
+            if ($arrayRecipients == "") {
+                echo t('EMPTY_RECIPIENTS');
+            } else {
+                $headers[] = 'Bcc:'. $arrayRecipients;
+                if ($cfg['noreplyTransmitter'] = "") {
+                    $headers[] = 'From:' . $transmitter;
+                } else {
+                    $headers[] = 'From:' . $cfg['noreplyTransmitter'];
+                }
+                $headers[] = "Reply-to:" . $transmitter;
+                $headers[] = "Importance: Normal";
+                $headers[] = "MIME-Version: 1.0";
+                $headers[] = 'Content-Type: text/html; charset="utf-8"';
+                $headers[] = 'Content-Tranfert-Encoding: 8bit';
+                return mail(null, $email_subject, $message, implode("\r\n", $headers));
+            }
+        } else {
+            echo t('VALID_INPUTS');
+        }
+    } else {
+        echo t('INCORRECT_INFO');
+    }
+}

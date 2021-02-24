@@ -221,3 +221,9 @@ $cfg['installation_done'] = false;
  * var- folder should kept secret and accessing it may lead to data leak if unprotected.
  */
 $cfg['debug'] = false;
+
+/* Mail: noreply
+ * Registration of an email address in noreply, for each sending of an email.
+ * Leave the field blank and there will be no noreply.
+ */
+$cfg['noreplyTransmitter'] = '';

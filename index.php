@@ -98,6 +98,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
 
 ?>
 <div id="upload_finished">
+<div id="alertDiv"></div>
     <p><?php echo t('FILE_UP') ?></p>
 
     <div id="upload_finished_download_page">
@@ -105,7 +106,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
         <a id="upload_link" href=""><?php echo t('DL_PAGE') ?></a>
         <a id="upload_link_email" href=""><img id="upload_image_email"/></a>
     </p><p>
-        <code id=upload_link_text></code>
+        <code id="upload_link_text"></code>
         <button id="upload_link_button">&#128203;</button>
     </p>
     </div>
@@ -116,7 +117,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <p>
         <a id="preview_link" href=""><?php echo t('VIEW_LINK') ?></a>
     </p><p>
-        <code id=preview_link_text></code>
+        <code id="preview_link_text"></code>
         <button id="preview_link_button">&#128203;</button>
     </p>
     </div>
@@ -127,7 +128,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <p>
         <a id="direct_link" href=""><?php echo t('DIRECT_DL') ?></a>
     </p><p>
-        <code id=direct_link_text></code>
+        <code id="direct_link_text"></code>
         <button id="direct_link_button">&#128203;</button>
     </p>
     </div>
@@ -136,7 +137,7 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <p>
         <a id="delete_link" href=""><?php echo t('DELETE_LINK') ?></a>
     </p><p>
-        <code id=delete_link_text></code>
+        <code id="delete_link_text"></code>
         <button id="delete_link_button">&#128203;</button>
     </p>
     </div>
@@ -144,6 +145,20 @@ elseif (true === jirafeau_challenge_upload_ip($cfg, get_ip_address($cfg))) {
     <div id="upload_validity">
     <p><?php echo t('VALID_UNTIL'); ?>:</p>
     <p id="date"></p>
+    </div>
+
+    <!--- Form send mail -->
+    <div id="ConteneurFormMail">
+    <fieldset>
+        <form name="FormMail" action="" method="post" id="form">
+            <input name="transmitter" type="text" placeholder="<?php echo t('TRANSMITTER'); ?>" id="transmitter" required/>
+            <input name="recipients" type="text" id="recipient" placeholder="<?php echo t('RECIPIENT'); ?>" required/>
+            <div id="champs_1"><a href="javascript:create_champ(1)">+</a></div>
+            <input name="subject" id="subject" placeholder="<?php echo t('MAIL_SUBJECT'); ?>" required></input>
+            <textarea name="message" id="message" placeholder="<?php echo t('MESSAGE'); ?>" rows="5" cols="33"></textarea>
+            <input type="submit" value="<?php echo t('SEND') ?>" onclick="getDataFormMail(event)" required></input>
+        </form>
+    </fieldset>
     </div>
 </div>
 

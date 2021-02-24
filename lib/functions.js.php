@@ -149,6 +149,7 @@ function show_link (reference, delete_code, crypt_key, date)
     b += encodeURIComponent(web_root + download_link_href) + "%0D" + "%0A";
     if (false == isEmpty(date))
     {
+        //Send download link by mailto
         b += "%0D" + "%0A" + encodeURIComponent("<?php echo t("VALID_UNTIL"); ?>: " + date.format('YYYY-MM-DD hh:mm (GMT O)')) + "%0D" + "%0A";
         document.getElementById('upload_link_email').href = "mailto:?body=" + b + "&subject=" + encodeURIComponent(filename);
     }
@@ -762,25 +763,113 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 // Add copy event listeners
 function copyLinkToClipboard(link_id) {
-    var focus = document.activeElement;
-    var e = document.getElementById(link_id);
-
-    var tmp = document.createElement("textarea");
+    let focus = document.activeElement;
+    let e = document.getElementById(link_id);
+    let tmp = document.createElement("textarea");
     document.body.appendChild(tmp);
     tmp.textContent = e.href;
     tmp.focus();
     tmp.setSelectionRange(0, tmp.value.length);
     document.execCommand("copy");
     document.body.removeChild(tmp);
-
     focus.focus();
 }
 
 function addCopyListener(button_id, link_id) {
-    if(document.getElementById(button_id)){
-        document.getElementById(button_id)
-            .addEventListener("click", function() {
-                copyLinkToClipboard(link_id);});
+    let element = document.getElementById(button_id);
+    element.addEventListener("click", function() {
+        copyLinkToClipboard(link_id);
+        document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERT_COPIED'); ?></strong>";
+        setTimeout(function() {
+            document.getElementById('alertDiv').innerHTML = "";
+        },4000);
+        if (element.classList) {
+            let Liste = document.querySelectorAll("button");
+            Liste.forEach(function(button) {
+                button.classList.remove("Copy");
+            });
+            element.classList.add("Copy");
+        }
+    })
+}
+
+function create_champ(i) {
+    let i2 = i + 1;
+    document.getElementById('champs_'+i).innerHTML = '<input type="text" name="recipients" id="recipient'+i+'"><a id="remove'+i+'" href="javascript:removeChamps('+i+')" style="color:red">x</a>';
+    document.getElementById('champs_'+i).innerHTML += (i <= 10) ? '<br /><div id="champs_'+i2+'"><a href="javascript:create_champ('+i2+')">+</a></div>' : '';
+}
+
+function removeChamps(i) {
+    remove = document.getElementById("remove"+i);
+    input = document.getElementById("recipient"+i);
+    input.remove(input);
+    remove.remove(remove);
+}
+
+function getDataFormMail(e) {
+    e.preventDefault();
+    document.getElementById('ConteneurFormMail').style.visibility = 'hidden';
+    let link = document.getElementById('upload_link_text').textContent;
+    let expireDate = document.getElementById('date').textContent;
+    let transmitter = document.getElementById('transmitter').value;
+    let recipients = [];
+    let NbrRecipients = document.getElementsByName('recipients');
+    for (element of NbrRecipients) {
+        recipients.push(element.value);
     }
+    let email_subject = document.getElementById('subject').value;
+    let message = document.getElementById('message').value;
+    let password = document.getElementById("input_key").value;
+    let filename = document.getElementById('file_select').value;
+    filename = filename.substring(12);
+    let req = new XMLHttpRequest();
+    req.addEventListener ("error", XHRErrorHandler, false);
+    req.addEventListener ("abort", XHRErrorHandler, false);
+    req.onreadystatechange = function (evt) {
+        if (req.readyState == 4 && req.status == 200)
+        {
+            let res = req.responseText;
+            if (/^Error/.test(res))
+            {
+                pop_failure (res);
+                return;
+            }
+        } else {
+            ("<?php echo t("ERR_OCC"); ?>");
+        }
+    }
+    req.open ("POST", 'script.php', true);
+    req.withCredentials = true;
+    let form = new FormData();
+    form.append ("FormMail", FormMail);
+    if (transmitter)
+        form.append ("transmitter", transmitter);
+    if (recipients)
+        form.append ("recipients", recipients);
+    if (message)
+        form.append ("message", message);
+    if (link)
+        form.append ("link", link);
+    if (email_subject)
+        form.append ("email_subject", email_subject);
+    if (filename)
+        form.append ("filename", filename);
+    if (expireDate)
+        form.append ("expireDate", expireDate);
+    if (password)
+        form.append ("password", password);
+
+    if (transmitter == "" || recipients == "") {
+        document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERT_NOSUBMIT'); ?></strong>";
+        setTimeout(function() {
+            document.getElementById('alertDiv').innerHTML = "";
+        },4000);
+    } else {
+        document.getElementById('alertDiv').innerHTML = "<strong><?php echo t('ALERT_SUBMIT'); ?></strong>";
+        setTimeout(function() {
+            document.getElementById('alertDiv').innerHTML = "";
+        },4000);
+    }
+    req.send (form);
 }
 // @license-end
